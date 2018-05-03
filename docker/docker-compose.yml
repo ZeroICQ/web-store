@@ -35,6 +35,7 @@ services:
             - ./mysql/mysql.d:/etc/mysql/conf.d
             # https://stackoverflow.com/questions/39175194/docker-compose-persistent-data-mysql
             - ../dump:/var/lib/mysql
+            - ./mysql/db.sql:/docker-entrypoint-initdb.d/db.sql
         environment:
             MYSQL_ROOT_PASSWORD: ""
             MYSQL_USER: "app"

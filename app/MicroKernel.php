@@ -23,16 +23,7 @@ class MicroKernel
         $this->container = new ContainerBuilder();
 
         $twig_loader = new Twig_Loader_Filesystem($this->getTemplateDir());
-
-//        $twig = new Twig_Environment($twig_loader, array(
-//            'debug' => true,
-//            'cache' => $this->getCacheDir(),
-////            'auto_reload' => true,
-//        ));
-
         $staticPath = new StaticPathExtension($this->getStaticDirName());
-//        $twig->addExtension($staticPath);
-
         $this->container->register('twig', Twig_Environment::class)
             ->setArguments([
                 $twig_loader,
