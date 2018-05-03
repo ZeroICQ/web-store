@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>My Webpage</title>
+    {% block head %}
+        <meta charset="UTF-8">
+        <title>Memes web store</title>
+        <link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="css/skeleton.css">
+    {% endblock %}
 </head>
 <body>
-<h1>My Webpage</h1>
+{% block content %}{% endblock %}
 </body>
 </html>
