@@ -1,3 +1,0 @@
-login:
-    path:     /
-    controller: App\Controller\UserController::login
