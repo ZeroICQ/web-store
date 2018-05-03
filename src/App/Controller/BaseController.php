@@ -2,22 +2,20 @@
 
 namespace App\Controller;
 
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Twig_Environment;
 use Twig_Loader_Filesystem;
 
 abstract class BaseController
 {
     /**
-     * @var Twig_Environment
+     * @var ContainerBuilder
      */
-    protected $twig;
+    protected $container;
 
-    public function __construct()
+    public function __construct(ContainerBuilder $container)
     {
-        $loader = new Twig_Loader_Filesystem(__DIR__.'/../Templates');
-        $this->twig = new Twig_Environment($loader, array(
-            'cache' => __DIR__.'/../../../dump/cache',
-        ));
+        $this->container = $container;
     }
 
 }

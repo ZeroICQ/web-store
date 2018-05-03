@@ -12,6 +12,6 @@ class LoginController extends BaseController
      */
     public function signInAction()
     {
-        return $this->twig->render('index.html');
+        return $this->container->get('twig')->render('index.html');
     }
 }
