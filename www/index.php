@@ -1,9 +1,10 @@
 <?php
 
-use App\Routing\Router;
-
-require_once './init.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 $URI = $_SERVER['REQUEST_URI'];
 
-echo Router::handleUri($URI);
+$kernel = new MicroKernel();
+
+echo $kernel->handleRequest($URI);
+
