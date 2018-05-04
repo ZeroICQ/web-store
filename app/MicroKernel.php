@@ -1,9 +1,12 @@
 <?php
 
 
+use App\Authentication\Service\AuthenticationService;
 use App\Helpers\StaticPathExtension;
+use App\ORM\EntityManager;
 use App\Routing\Router;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 class MicroKernel
 {
@@ -20,8 +23,9 @@ class MicroKernel
 
     public function __construct()
     {
+        //di
         $this->container = new ContainerBuilder();
-
+        //twig
         $twig_loader = new Twig_Loader_Filesystem($this->getTemplateDir());
         $staticPath = new StaticPathExtension($this->getStaticDirName());
         $this->container->register('twig', Twig_Environment::class)
@@ -34,7 +38,23 @@ class MicroKernel
                 ]
             ])
             ->addMethodCall('addExtension', [$staticPath]);
+        //db
+        $this->container->register('db', mysqli::class)
+            ->setArguments([
+                'mysql',
+                'app',
+                'app',
+                'app'
+            ]);
+        //repository manager
+        $this->container->register('entityManager', EntityManager::class)
+            ->setArguments([new Reference('db')]);
 
+        //auth service
+        $this->container->register('auth', AuthenticationService::class)
+            ->setArguments([new Reference('entityManager')]);
+
+        //router
         $this->router = new Router($this->container);
 
     }
