@@ -18,10 +18,20 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
      */
     public function findById(int $id): ?UserInterface
     {
-        $result = $this->conn->query("SELECT * FROM users");
-        $user = new User(...$result->fetch_row());
+        $stmt = $this->conn->prepare("SELECT id, login, password, salt FROM users WHERE id = ?");
+        $stmt->bind_param('i', $id);
+        $stmt->execute();
 
-        $result->close();
+        $stmt->bind_result($id, $login, $password, $salt);
+        $stmt->fetch();
+
+        if ($stmt->num_rows === 0) {
+            $user = null;
+        } else {
+            $user = new User($id, $login, $password, $salt);
+        }
+
+        $stmt->close();
 
         return $user;
     }

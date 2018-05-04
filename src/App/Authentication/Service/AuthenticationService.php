@@ -31,7 +31,7 @@ class AuthenticationService implements AuthenticationServiceInterface
     public function authenticate($credentials) : UserTokenInterface
     {
 //        $this->em->getRepository('user')->findById(1);
-        return new UserToken($this->em->getRepository('user')->findById(1));
+        return new UserToken($this->em->getRepository('user')->findById(2));
     }
 
     /**

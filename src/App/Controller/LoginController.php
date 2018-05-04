@@ -12,8 +12,13 @@ class LoginController extends BaseController
      */
     public function signInAction()
     {
-        $user = $this->container->get('auth')->authenticate('myuser');
-        $name = $user->getUser()->getLogin();
-        return $this->container->get('twig')->render('index.html', ['name'=>$name]);
+
+        $userToken = $this->container->get('auth')->authenticate('test');
+
+        if (!$userToken->isAnonymous()) {
+            $name = $userToken->getUser()->getLogin();
+        }
+
+        return $this->container->get('twig')->render('signIn.html.twig', ['name'=>$name]);
     }
 }

@@ -17,6 +17,7 @@
     },
     "require": {
         "php": ">=7.2.0",
+        "symfony/http-kernel": "^4.0",
         "twig/twig": "^2.4.8",
         "symfony/dependency-injection": "*"
     },

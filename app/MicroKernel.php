@@ -7,6 +7,7 @@ use App\ORM\EntityManager;
 use App\Routing\Router;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\HttpFoundation\Request;
 
 class MicroKernel
 {
@@ -93,11 +94,11 @@ class MicroKernel
     }
 
     /**
-     * @param string $URI
+     * @param Request $request
      * @return string
      */
-    public function handleRequest($URI) : string
+    public function handleRequest(Request $request) : string
     {
-        return $this->router->handleUri($URI);
+        return $this->router->handleUri($request);
     }
 }
