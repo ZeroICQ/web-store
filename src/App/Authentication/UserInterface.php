@@ -17,6 +17,11 @@ interface UserInterface
 	 */
 	public function getId(): ?int;
 
+    /**
+     * @param int $id
+     */
+    public function setId(int $id);
+
 	/**
 	 * Метод возвращает логин пользователя. Логин является уникальным свойством.
 	 *

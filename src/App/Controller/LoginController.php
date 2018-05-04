@@ -6,7 +6,9 @@ namespace App\Controller;
 use App\Authentication\Encoder\UserPasswordEncoder;
 use App\Authentication\User;
 use App\Controller\BaseController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class LoginController extends BaseController
 {
@@ -15,22 +17,34 @@ class LoginController extends BaseController
      */
     public function signInAction() : Response
     {
-//        if ($this->isPost()) {
-//            $login = $this->request->request->getAlnum('login');
-//            $pass = $this->request->request->getAlnum('password');
-//        }
-//        $userToken = $this->container->get('auth')->authenticate('test');
-//
-//        if (!$userToken->isAnonymous()) {
-//            $name = $userToken->getUser()->getLogin();
-//        }
+        $data = [];
+        $session = $this->container->get('session');
 
-        $this->render('signIn.html.twig');
+        if ($this->isPost()) {
+
+            $login = $this->request->request->getAlnum('login');
+            $pass = $this->request->request->getAlnum('password');
+
+            $user = $this->container->get('entityManager')->getRepository('user')->findByLoginPassword($login, $pass);
+
+            $this->container->get('auth')->generateCredentials($user, $session);
+        }
+
+        $userToken = $this->container->get('auth')->authenticate($session);
+//
+        if (!$userToken->isAnonymous()) {
+            $data['login'] = $userToken->getUser()->getLogin();
+        }
+
+        $this->render('signIn.html.twig', $data);
 
         return $this->response;
     }
 
-    public function registerAction()
+    /**
+     * @return Response
+     */
+    public function registerAction(): Response
     {
         $data = [];
 
@@ -43,11 +57,26 @@ class LoginController extends BaseController
             $cryptPass = UserPasswordEncoder::encodePassword($rawPass);
 
             $user = new User(null, $login, $cryptPass);
-            $data['sql_errors'] = $this->container->get('entityManager')->getRepository('user')->save($user);
+            $sql_errors = $this->container->get('entityManager')->getRepository('user')->save($user);
 
+            //successfully registered
+            if (count($sql_errors) === 0) {
+                $this->container->get('auth')->generateCredentials($user, $this->getSession());
+                $this->response = new RedirectResponse('/');
+                return $this->response;
+
+            }
+            $data['sql_errors']  = $sql_errors;
             $this->render('register.html.twig', $data);
         }
 
+        return $this->response;
+    }
+
+    public function logoutAction() : Response
+    {
+        $this->getSession()->invalidate();
+        $this->response = new RedirectResponse('/');
         return $this->response;
     }
 }

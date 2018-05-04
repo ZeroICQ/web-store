@@ -36,6 +36,8 @@ class Router
                 return (new LoginController($this->container, $request))->signInAction();
             case '/register':
                 return (new LoginController($this->container, $request))->registerAction();
+            case '/logout':
+                return (new LoginController($this->container, $request))->logoutAction();
             default:
                 return new Response("404", 404);
         }

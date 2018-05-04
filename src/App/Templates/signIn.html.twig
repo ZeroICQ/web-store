@@ -2,22 +2,34 @@
 
 {% block content %}
     <h1>Sign In</h1>
-    <form>
-        <div class="row">
-            <label for="login">Login</label>
-            <input id="login" type="text">
-        </div>
-        <div class="row">
-            <label for="password">Password</label>
-            <input id="password" type="password">
-        </div>
-        <div class="row">
-            <input class="button-primary" type="submit" value="Sign In">
-        </div>
-    </form>
 
-    <div class="row">
-        <a href="/register" class="button">register</a>
-    </div>
+    {% if not login is null %}
+        <div class="row">
+            hello, {{ login }}
+        </div>
+        <div class="row">
+            <a href="/logout" class="button">Logout</a>
+        </div>
+    {% endif %}
 
+    {% if login is null %}
+
+        <form method="POST">
+            <div class="row">
+                <label for="login">Login</label>
+                <input name="login" id="login" type="text">
+            </div>
+            <div class="row">
+                <label for="password">Password</label>
+                <input name="password" id="password" type="password">
+            </div>
+            <div class="row">
+                <input class="button-primary" type="submit" value="Sign In">
+            </div>
+        </form>
+
+        <div class="row">
+            <a href="/register" class="button">register</a>
+        </div>
+    {% endif %}
 {% endblock %}

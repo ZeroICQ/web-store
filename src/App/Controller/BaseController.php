@@ -5,6 +5,7 @@ namespace App\Controller;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Twig_Environment;
 use Twig_Loader_Filesystem;
 
@@ -67,6 +68,14 @@ abstract class BaseController
         } catch (\Exception $e) {
             return false;
         }
+    }
+
+    /**
+     * @return Session
+     */
+    protected function getSession() : Session
+    {
+        return $session = $this->container->get('session');
     }
 
 }

@@ -15,7 +15,7 @@ class UserToken implements UserTokenInterface
      * UserToken constructor.
      * @param UserInterface|null $user
      */
-    public function __construct($user)
+    public function __construct($user = null)
     {
         $this->user = $user;
     }

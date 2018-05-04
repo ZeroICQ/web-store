@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class MicroKernel
 {
@@ -27,6 +28,11 @@ class MicroKernel
     {
         //di
         $this->container = new ContainerBuilder();
+
+        //session
+        $this->container->register('session', Session::class)
+            ->addMethodCall('start');
+
         //twig
         $twig_loader = new Twig_Loader_Filesystem($this->getTemplateDir());
         $staticPath = new StaticPathExtension($this->getStaticDirName());

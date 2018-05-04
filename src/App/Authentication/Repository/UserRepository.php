@@ -18,17 +18,20 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
      */
     public function findById(int $id): ?UserInterface
     {
-        $stmt = $this->conn->prepare("SELECT id, login, password, salt FROM users WHERE id = ?");
+        $stmt = $this->conn->prepare("SELECT login, password FROM users WHERE id = ?");
         $stmt->bind_param('i', $id);
         $stmt->execute();
 
-        $stmt->bind_result($id, $login, $password, $salt);
+        $login = null;
+        $password = null;
+
+        $stmt->bind_result($login, $password);
         $stmt->fetch();
 
         if ($stmt->num_rows === 0) {
             $user = null;
         } else {
-            $user = new User($id, $login, $password, $salt);
+            $user = new User($id, $login, $password);
         }
 
         $stmt->close();
@@ -44,7 +47,44 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
      */
     public function findByLogin(string $login): ?UserInterface
     {
-        // TODO: Implement findByLogin() method.
+        $login = strtolower($login);
+
+        $stmt = $this->conn->prepare("SELECT id, password FROM users WHERE login = ?");
+        $stmt->bind_param('s', $login);
+        $stmt->execute();
+
+        $id = null;
+        $password = null;
+
+        $stmt->bind_result($id,$password);
+
+
+        if (!$stmt->fetch()) {
+            $user = null;
+        } else {
+            $user = new User($id, $login, $password);
+        }
+
+        $stmt->close();
+
+        return $user;
+    }
+
+    /**
+     * @param string $login
+     * @param string $rawPassword
+     * @return UserInterface|null
+     */
+    public function findByLoginPassword(string $login, string $rawPassword): ?UserInterface
+    {
+        $login = strtolower($login);
+        $user = $this->findByLogin($login);
+
+        if ($user && password_verify($rawPassword, $user->getPassword())) {
+            return $user;
+        }
+
+        return null;
     }
 
     /**
@@ -62,6 +102,9 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         $stmt->bind_param("ss", $login, $pass);
         $stmt->execute();
         $errors = $stmt->error_list;
+
+        $user->setId($this->conn->insert_id);
+
         $stmt->close();
         return $errors;
     }

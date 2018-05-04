@@ -4,6 +4,7 @@ namespace App\Authentication\Service;
 
 use App\Authentication\UserTokenInterface;
 use App\Authentication\UserInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
  * Контракт представляет услуги по аутентификации и идентификации клиентов.
@@ -31,16 +32,17 @@ interface AuthenticationServiceInterface
 	/**
 	 * Метод аутентифицирует пользователя на основании authentication credentials запроса
 	 *
-	 * @param mixed $credentials
+	 * @param Session $session
 	 * @return UserTokenInterface
 	 */
-	public function authenticate($credentials);
+	public function authenticate(Session $session);
 
-	/**
-	 * Метод генерирует authentication credentials
-	 *
-	 * @param UserInterface $user
-	 * @return mixed
-	 */
-	public function generateCredentials(UserInterface $user);
+    /**
+     * Метод генерирует authentication credentials
+     *
+     * @param UserInterface|null $user
+     * @param Session $session
+     * @return mixed
+     */
+	public function generateCredentials(?UserInterface $user, Session $session);
 }
