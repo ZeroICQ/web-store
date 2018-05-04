@@ -51,15 +51,18 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
      * Метод сохраняет пользоваля в хранилище
      *
      * @param UserInterface $user
+     * @return array
      */
-    public function save(UserInterface $user)
+    public function save(UserInterface $user) : array
     {
-        $stmt = $this->conn->prepare("INSERT INTO users(login, password) values(?,?)");
+        $stmt = $this->conn->prepare("INSERT INTO users(login, password) values(?, ?)");
         $login = $user->getLogin();
         $pass = $user->getPassword();
 
         $stmt->bind_param("ss", $login, $pass);
         $stmt->execute();
+        $errors = $stmt->error_list;
         $stmt->close();
+        return $errors;
     }
 }

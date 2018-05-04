@@ -32,7 +32,7 @@ class User implements UserInterface
     public function __construct(?int $id, string $login, string $password)
     {
         $this->id = $id;
-        $this->login = strlen($login) > 0 ? $login : null;
+        $this->login = strlen($login) > 0 ? strtolower($login) : null;
         $this->password = strlen($password) > 0 ? $password : null;
     }
 

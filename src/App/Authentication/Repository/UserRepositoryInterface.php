@@ -29,10 +29,11 @@ interface UserRepositoryInterface
 	 */
 	public function findByLogin(string $login): ?UserInterface;
 
-	/**
-	 * Метод сохраняет пользоваля в хранилище
-	 *
-	 * @param UserInterface $user
-	 */
-	public function save(UserInterface $user);
+    /**
+     * Метод сохраняет пользоваля в хранилище
+     *
+     * @param UserInterface $user
+     * @return array
+     */
+	public function save(UserInterface $user) : array;
 }

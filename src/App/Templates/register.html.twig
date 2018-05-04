@@ -1,6 +1,13 @@
 {% extends "index.html.twig" %}
 
 {% block content %}
+    <h1>Register</h1>
+    {% for error in sql_errors %}
+        <div class="row">
+            {{ error['error'] }}
+        </div>
+    {% endfor %}
+
     <form method="post">
         <div class="row">
             <label for="login">Login</label>
@@ -14,5 +21,9 @@
             <input class="button-primary" type="submit" value="Register">
         </div>
 </form>
+
+    <div class="row">
+        <a href="/signIn" class="button">sing In</a>
+    </div>
 
 {% endblock %}

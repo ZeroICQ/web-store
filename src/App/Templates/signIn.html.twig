@@ -1,6 +1,7 @@
 {% extends "index.html.twig" %}
 
 {% block content %}
+    <h1>Sign In</h1>
     <form>
         <div class="row">
             <label for="login">Login</label>
@@ -14,5 +15,9 @@
             <input class="button-primary" type="submit" value="Sign In">
         </div>
     </form>
+
+    <div class="row">
+        <a href="/register" class="button">register</a>
+    </div>
 
 {% endblock %}
