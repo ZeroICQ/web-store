@@ -6,6 +6,7 @@ namespace App\Routing;
 use App\Controller\LoginController;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class Router
 {
@@ -20,20 +21,23 @@ class Router
     }
 
     /**
-     * @param Request $URI
-     * @return string
+     * @param Request $request
+     * @param Response $response
+     * @return Response
      */
-    public function handleUri(Request $request): string
+    public function handleUri(Request $request): Response
     {
         $URI = explode('?', $request->getRequestUri())[0];
 
+        //TODO: get rid of copypaste
         switch ($URI) {
             case '/':
             case '/signIn':
                 return (new LoginController($this->container, $request))->signInAction();
+            case '/register':
+                return (new LoginController($this->container, $request))->registerAction();
             default:
-                header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
-                return '404';
+                return new Response("404", 404);
         }
     }
 }

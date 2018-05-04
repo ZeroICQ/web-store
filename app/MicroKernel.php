@@ -2,12 +2,13 @@
 
 
 use App\Authentication\Service\AuthenticationService;
-use App\Helpers\StaticPathExtension;
+use App\Twig\StaticPathExtension;
 use App\ORM\EntityManager;
 use App\Routing\Router;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class MicroKernel
 {
@@ -95,9 +96,9 @@ class MicroKernel
 
     /**
      * @param Request $request
-     * @return string
+     * @return Response
      */
-    public function handleRequest(Request $request) : string
+    public function handleRequest(Request $request) : Response
     {
         return $this->router->handleUri($request);
     }

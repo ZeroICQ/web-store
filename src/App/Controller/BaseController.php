@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Twig_Environment;
 use Twig_Loader_Filesystem;
 
@@ -20,6 +21,11 @@ abstract class BaseController
     protected $request;
 
     /**
+     * @var Response
+     */
+    protected $response;
+
+    /**
      * BaseController constructor.
      * @param ContainerBuilder $container
      * @param Request $request
@@ -28,6 +34,8 @@ abstract class BaseController
     {
         $this->container = $container;
         $this->request = $request;
+
+        $this->response = new Response();
     }
 
     /**
@@ -44,6 +52,21 @@ abstract class BaseController
     public function isGet(): bool
     {
         return $this->request->isMethod('GET');
+    }
+
+    /**
+     * @param string $templateName
+     * @param array $params
+     * @return bool
+     */
+    protected function render(string $templateName, array $params = []): bool
+    {
+        try {
+            $this->response->setContent($this->container->get('twig')->render($templateName, $params));
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
 }

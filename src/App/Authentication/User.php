@@ -4,42 +4,36 @@
 namespace App\Authentication;
 
 
+use phpDocumentor\Reflection\Types\Null_;
+
 class User implements UserInterface
 {
     /**
-     * @var int
+     * @var int|null
      */
     private $id;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $login;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $password;
 
     /**
-     * @var string
-     */
-    private $salt;
-
-
-    /**
      * User constructor.
-     * @param int $id
+     * @param int|null $id
      * @param string $login
      * @param string $password
-     * @param string $salt
      */
-    public function __construct(int $id, string $login, string $password, string $salt)
+    public function __construct(?int $id, string $login, string $password)
     {
         $this->id = $id;
-        $this->login = $login;
-        $this->password = $password;
-        $this->salt = $salt;
+        $this->login = strlen($login) > 0 ? $login : null;
+        $this->password = strlen($password) > 0 ? $password : null;
     }
 
 
@@ -58,7 +52,7 @@ class User implements UserInterface
      *
      * @return string
      */
-    public function getLogin(): string
+    public function getLogin(): ?string
     {
         return $this->login;
     }
@@ -68,18 +62,9 @@ class User implements UserInterface
      *
      * @return string
      */
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
         return $this->password;
     }
 
-    /**
-     * Метод возвращает соль, которая участвовала при построении пароля
-     *
-     * @return string|null
-     */
-    public function getSalt(): ?string
-    {
-        return $this->salt;
-    }
 }

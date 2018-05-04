@@ -13,28 +13,21 @@ interface UserInterface
 	/**
 	 * Метод возвращает идентификационную информацию пользователя (первичный ключ в БД пользователей приложения)
 	 *
-	 * @return int
+	 * @return int|null
 	 */
-	public function getId(): int;
+	public function getId(): ?int;
 
 	/**
 	 * Метод возвращает логин пользователя. Логин является уникальным свойством.
 	 *
-	 * @return string
+	 * @return string|null
 	 */
-	public function getLogin(): string;
+	public function getLogin(): ?string;
 
 	/**
 	 * Метод возвращает пароль пользователя. Пароль возвращается в зашифрованном виде.
 	 *
-	 * @return string
-	 */
-	public function getPassword(): string;
-
-	/**
-	 * Метод возвращает соль, которая участвовала при построении пароля
-	 *
 	 * @return string|null
 	 */
-	public function getSalt(): ?string;
+	public function getPassword(): ?string;
 }

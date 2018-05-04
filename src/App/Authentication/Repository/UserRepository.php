@@ -54,6 +54,12 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
      */
     public function save(UserInterface $user)
     {
-        // TODO: Implement save() method.
+        $stmt = $this->conn->prepare("INSERT INTO users(login, password) values(?,?)");
+        $login = $user->getLogin();
+        $pass = $user->getPassword();
+
+        $stmt->bind_param("ss", $login, $pass);
+        $stmt->execute();
+        $stmt->close();
     }
 }

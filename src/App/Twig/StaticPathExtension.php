@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Helpers;
+namespace App\Twig;
 
 
 class StaticPathExtension extends \Twig_Extension
