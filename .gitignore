@@ -2,3 +2,4 @@ dump
 !dump/.gitkeep
 .idea
 vendor
+cov

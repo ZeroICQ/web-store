@@ -1,0 +1,33 @@
+<phpunit bootstrap="tests/bootstrap.php"
+         colors="always"
+         convertErrorsToExceptions="true"
+         stopOnError="false"
+         stopOnFailure="false"
+         stopOnIncomplete="false"
+         stopOnSkipped="false"
+         syntaxCheck="false"
+         verbose="true"
+>
+    <testsuites>
+        <testsuite name="Complete">
+            <directory suffix="Test.php">tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="false">
+            <directory suffix=".php">src/</directory>
+        </whitelist>
+    </filter>
+
+    <logging>
+        <log type="coverage-html" target="cov/report" lowUpperBound="35"
+             highLowerBound="70"/>
+        <log type="coverage-clover" target="cov/coverage.xml"/>
+        <log type="coverage-php" target="cov/coverage.serialized"/>
+        <log type="coverage-text" target="php://stdout" showUncoveredFiles="false"/>
+        <log type="junit" target="cov/logfile.xml"/>
+        <log type="testdox-html" target="cov/testdox.html"/>
+        <log type="testdox-text" target="cov/testdox.txt"/>
+    </logging>
+</phpunit>
