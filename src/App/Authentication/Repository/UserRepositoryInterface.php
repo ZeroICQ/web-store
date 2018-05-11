@@ -33,7 +33,6 @@ interface UserRepositoryInterface
      * Метод сохраняет пользоваля в хранилище
      *
      * @param UserInterface $user
-     * @return array
      */
-	public function save(UserInterface $user) : array;
+	public function save(UserInterface $user);
 }

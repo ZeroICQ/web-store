@@ -18,21 +18,12 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
      */
     public function findById(int $id): ?UserInterface
     {
-        $stmt = $this->conn->prepare("SELECT login, password FROM users WHERE id = ?");
-        $stmt->bind_param('i', $id);
-        $stmt->execute();
-
-        $login = null;
-        $password = null;
-
-        $stmt->bind_result($login, $password);
+        $result = $this->db->selectFirstSimpleEqCond('users', ['login, password'], 'id', $id, 'i');
 
         $user = null;
-        if ($stmt->fetch()) {
-            $user = new User($id, $login, $password);
+        if ($result) {
+            $user = new User($id, $result['login'], $result['password']);
         }
-
-        $stmt->close();
 
         return $user;
     }
@@ -47,23 +38,13 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     {
         $login = strtolower($login);
 
-        $stmt = $this->conn->prepare("SELECT id, password FROM users WHERE login = ?");
-        $stmt->bind_param('s', $login);
-        $stmt->execute();
-
-        $id = null;
-        $password = null;
-
-        $stmt->bind_result($id,$password);
+        $result = $this->db->selectFirstSimpleEqCond('users', ['id, password'], 'login', $login, 's');
 
 
-        if (!$stmt->fetch()) {
-            $user = null;
-        } else {
-            $user = new User($id, $login, $password);
+        $user = null;
+        if ($result) {
+            $user = new User($result['id'], $login, $result['password']);
         }
-
-        $stmt->close();
 
         return $user;
     }
@@ -72,21 +53,11 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
      * Метод сохраняет пользоваля в хранилище
      *
      * @param UserInterface $user
-     * @return array
      */
-    public function save(UserInterface $user) : array
+    public function save(UserInterface $user)
     {
-        $stmt = $this->conn->prepare("INSERT INTO users(login, password) values(?, ?)");
-        $login = $user->getLogin();
-        $pass = $user->getPassword();
+        $insert_id = $this->db->insert('users', ['login' => $user->getLogin(), 'password' => $user->getPassword()], 'ss');
+        $user->setId($insert_id);
 
-        $stmt->bind_param("ss", $login, $pass);
-        $stmt->execute();
-        $errors = $stmt->error_list;
-
-        $user->setId($this->conn->insert_id);
-
-        $stmt->close();
-        return $errors;
     }
 }

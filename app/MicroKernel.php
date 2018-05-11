@@ -104,7 +104,7 @@ class MicroKernel
      */
     public function getKey(): string
     {
-        return 'kdaos0u-09mldasi9q21';
+        return 'iopdasojijioajscx,mzmc,z.xmiwqje';
     }
 
     /**

@@ -36,6 +36,11 @@ class LoginController extends BaseController
             $login = $this->request->request->getAlnum('login');
             $pass = $this->request->request->getAlnum('password');
 
+            if (strlen($login) < 1 || strlen($pass) < 1) {
+                $this->render('signIn.html.twig', $data);
+                return $this->response;
+            }
+
             $user = new User(null, $login, $pass);
 
             $authCookieValue = $this->container->get(AuthenticationService::class)->generateCredentials($user);
@@ -66,36 +71,42 @@ class LoginController extends BaseController
     public function registerAction(): Response
     {
 //        $data = [];
-//
-//        if ($this->isGet()) {
-//            $this->render('register.html.twig');
-//        } elseif($this->isPost()) {
-//
-//            $login = $this->request->request->getAlnum('login');
-//            $rawPass = $this->request->request->getAlnum('password');
+
+        if ($this->isGet()) {
+            $this->render('register.html.twig');
+            return $this->response;
+        }
+
+        $login = $this->request->request->getAlnum('login');
+        $pass = $this->request->request->getAlnum('password');
 //            $cryptPass = UserPasswordEncoder::encodePassword($rawPass);
-//
-//            $user = new User(null, $login, $cryptPass);
-//            $sql_errors = $this->container->get('entityManager')->getRepository('user')->save($user);
-//
-//            //successfully registered
-//            if (count($sql_errors) === 0) {
-//                $this->container->get('auth')->generateCredentials($user, $this->getSession());
-//                $this->response = new RedirectResponse('/');
-//                return $this->response;
-//
-//            }
-//            $data['sql_errors']  = $sql_errors;
-//            $this->render('register.html.twig', $data);
-//        }
+
+        $user = new User(null, $login, $pass);
+        $userToken = $this->container->get(AuthenticationService::class)->registerUser($user);
+
+        $authCookieValue = $this->container->get(AuthenticationService::class)->generateCredentials($user);
+
+        $now = new DateTime();
+        $authInterval = new DateInterval('P30D');//30days
+        $authCookie = new Cookie(self::authCookieName, $authCookieValue, $now->add($authInterval));
+
+        $this->response->headers->setCookie($authCookie);
+
+        if (!$userToken->isAnonymous()) {
+            $this->response = new RedirectResponse('/');
+        }
 
         return $this->response;
+
+//        $data['sql_errors']  = $sql_errors;
+//        $this->render('register.html.twig', $data);
+
     }
 
     public function logoutAction() : Response
     {
-//        $this->getSession()->invalidate();
-//        $this->response = new RedirectResponse('/');
+        $this->response = new RedirectResponse('/');
+        $this->response->headers->clearCookie(self::authCookieName);
         return $this->response;
     }
 }

@@ -57,6 +57,7 @@ class User implements UserInterface
         return $this->login;
     }
 
+
     /**
      * Метод возвращает пароль пользователя. Пароль возвращается в зашифрованном виде.
      *
@@ -75,4 +76,12 @@ class User implements UserInterface
         $this->id = $id;
     }
 
+    /**
+     * @param string $pass
+     * @return mixed
+     */
+    public function setPassword(string $pass)
+    {
+        $this->password = $pass;
+    }
 }

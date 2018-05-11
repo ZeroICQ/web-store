@@ -35,4 +35,10 @@ interface UserInterface
 	 * @return string|null
 	 */
 	public function getPassword(): ?string;
+
+    /**
+     * @param string $pass
+     * @return mixed
+     */
+    public function setPassword(string $pass);
 }
