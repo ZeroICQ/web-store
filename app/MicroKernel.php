@@ -1,15 +1,15 @@
 <?php
 
 
+use App\Authentication\Repository\UserRepository;
 use App\Authentication\Service\AuthenticationService;
+use App\ORM\DB;
 use App\Twig\StaticPathExtension;
-use App\ORM\EntityManager;
 use App\Routing\Router;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Session;
 
 class MicroKernel
 {
@@ -29,38 +29,36 @@ class MicroKernel
         //di
         $this->container = new ContainerBuilder();
 
-        //session
-        $this->container->register('session', Session::class)
-            ->addMethodCall('start');
-
         //twig
         $twig_loader = new Twig_Loader_Filesystem($this->getTemplateDir());
         $staticPath = new StaticPathExtension($this->getStaticDirName());
-        $this->container->register('twig', Twig_Environment::class)
+        $this->container->register(Twig_Environment::class, Twig_Environment::class)
             ->setArguments([
                 $twig_loader,
                 [
-                    'debug' => true,
-                    'cache' => $this->getCacheDir()
-                    //'auto_reload' => true,
+//                    'debug' => true,
+                    'cache' => $this->getCacheDir(),
+                    'auto_reload' => true
                 ]
             ])
             ->addMethodCall('addExtension', [$staticPath]);
-        //db
-        $this->container->register('db', mysqli::class)
+
+        //DB
+        $this->container->register(DB::class, DB::class)
             ->setArguments([
                 'mysql',
                 'app',
                 'app',
                 'app'
             ]);
-        //repository manager
-        $this->container->register('entityManager', EntityManager::class)
-            ->setArguments([new Reference('db')]);
+
+        //user repository
+        $this->container->register(UserRepository::class, UserRepository::class)
+            ->setArguments([new Reference(DB::class)]);
 
         //auth service
-        $this->container->register('auth', AuthenticationService::class)
-            ->setArguments([new Reference('entityManager')]);
+        $this->container->register(AuthenticationService::class, AuthenticationService::class)
+            ->setArguments([new Reference(UserRepository::class), $this->getKey(), $this->getSecret()]);
 
         //router
         $this->router = new Router($this->container);
@@ -98,6 +96,24 @@ class MicroKernel
     public function getStaticDirName(): string
     {
         return basename($this->getStaticDir());
+    }
+
+    /**
+     * Get encrypt key for user auth cookie
+     * @return string
+     */
+    public function getKey(): string
+    {
+        return 'kdaos0u-09mldasi9q21';
+    }
+
+    /**
+     * Get verification secret for auth cookie
+     * @return string
+     */
+    public function getSecret(): string
+    {
+        return 'dsdopo[okmvcxnigauhxzh';
     }
 
     /**

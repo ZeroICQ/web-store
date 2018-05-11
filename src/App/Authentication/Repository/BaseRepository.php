@@ -4,22 +4,23 @@
 namespace App\Authentication\Repository;
 
 
+use App\ORM\DB;
 use mysqli;
 
 class BaseRepository
 {
     /**
-     * @var mysqli
+     * @var DB
      */
-    protected $conn;
+    protected $db;
 
     /**
      * BaseRepository constructor.
-     * @param mysqli $connection
+     * @param DB $db
      */
-    public function __construct(mysqli $connection)
+    public function __construct(DB $db)
     {
-        $this->conn = $connection;
+        $this->db = $db;
     }
 
 }

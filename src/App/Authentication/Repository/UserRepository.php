@@ -69,23 +69,6 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     }
 
     /**
-     * @param string $login
-     * @param string $rawPassword
-     * @return UserInterface|null
-     */
-    public function findByLoginPassword(string $login, string $rawPassword): ?UserInterface
-    {
-        $login = strtolower($login);
-        $user = $this->findByLogin($login);
-
-        if ($user && password_verify($rawPassword, $user->getPassword())) {
-            return $user;
-        }
-
-        return null;
-    }
-
-    /**
      * Метод сохраняет пользоваля в хранилище
      *
      * @param UserInterface $user

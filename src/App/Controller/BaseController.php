@@ -62,20 +62,7 @@ abstract class BaseController
      */
     protected function render(string $templateName, array $params = []): bool
     {
-        try {
-            $this->response->setContent($this->container->get('twig')->render($templateName, $params));
-            return true;
-        } catch (\Exception $e) {
-            return false;
-        }
+        $this->response->setContent($this->container->get(Twig_Environment::class)->render($templateName, $params));
+        return true;
     }
-
-    /**
-     * @return Session
-     */
-    protected function getSession() : Session
-    {
-        return $session = $this->container->get('session');
-    }
-
 }

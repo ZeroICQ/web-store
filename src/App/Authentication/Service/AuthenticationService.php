@@ -4,56 +4,94 @@
 namespace App\Authentication\Service;
 
 
+use App\Authentication\Repository\UserRepository;
+use App\Authentication\User;
 use App\Authentication\UserInterface;
 use App\Authentication\UserToken;
 use App\Authentication\UserTokenInterface;
-use App\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 class AuthenticationService implements AuthenticationServiceInterface
 {
     /**
-     * @var EntityManager
+     * @var UserRepository
      */
-    private $em;
+    private $userRepository;
+    /**
+     * @var string
+     */
+    private $key;
+    /**
+     * @var string
+     */
+    private $secret;
 
-    public function __construct($entityManager)
+    /**
+     * AuthenticationService constructor.
+     * @param UserRepository $userRepository
+     * @param string $key
+     * @param string $secret
+     */
+    public function __construct(UserRepository $userRepository, string $key, string $secret)
     {
-        $this->em = $entityManager;
+        $this->userRepository = $userRepository;
+        $this->key = $key;
+        $this->secret = $secret;
     }
-
 
     /**
      * Метод аутентифицирует пользователя на основании authentication credentials запроса
      *
-     * @param Session $session
+     * @param string|mixed $credentials
      * @return UserTokenInterface
      */
-    public function authenticate(Session $session) : UserTokenInterface
+    public function authenticate($credentials) : UserTokenInterface
     {
-        $login = $session->get('login');
-        if (!$login) {
+        if (!$credentials) {
             return new UserToken(null);
         }
 
-        $user = $this->em->getRepository('user')->findByLogin($login);
+        [$nonce, $cipher] = str_split($credentials, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+
+        try {
+            $decr = json_decode(sodium_crypto_secretbox_open($cipher, $nonce, $this->key));
+        }
+        catch (\SodiumException $e) {
+            return new UserToken(null);
+        }
+
+        if ($decr && key_exists('user', $decr) && key_exists('secret', $decr) && $decr['secret'] == $this->secret &&
+            strlen($nonce) == SODIUM_CRYPTO_SECRETBOX_NONCEBYTES) {
+            $user = $this->userRepository->findByLogin($credentials->getLogin());
+        } else {
+            $user = null;
+        }
+
         return new UserToken($user);
     }
 
     /**
      * Метод генерирует authentication credentials
      *
-     * @param UserInterface|null $user
-     * @param Session $session
+     * @param UserInterface $user
      * @return mixed
      */
-    public function generateCredentials(?UserInterface $user, Session $session)
+    public function generateCredentials(UserInterface $user): string
     {
-        $session->invalidate();
-        if (!$user) {
-            return;
+        $userFromDB = $this->userRepository->findByLogin($user->getLogin());
+
+        if ($userFromDB && password_verify($user->getPassword(), $userFromDB->getPassword())) {
+            $cookieStructure = [
+                'user'   => $userFromDB->getLogin(),
+                'secret' => $this->secret
+            ];
+
+            // Using your key to encrypt information
+            $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+            $ciphertext = sodium_crypto_secretbox(json_encode($cookieStructure), $nonce, $this->key);
+            return $nonce.$ciphertext;
         }
 
-        $session->set('login', $user->getLogin());
+        return '';
     }
 }
