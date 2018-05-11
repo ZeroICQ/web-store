@@ -26,11 +26,9 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         $password = null;
 
         $stmt->bind_result($login, $password);
-        $stmt->fetch();
 
-        if ($stmt->num_rows === 0) {
-            $user = null;
-        } else {
+        $user = null;
+        if ($stmt->fetch()) {
             $user = new User($id, $login, $password);
         }
 
