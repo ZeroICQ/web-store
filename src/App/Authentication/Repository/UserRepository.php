@@ -53,11 +53,13 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
      * Метод сохраняет пользоваля в хранилище
      *
      * @param UserInterface $user
+     * @return int
      */
-    public function save(UserInterface $user)
+    public function save(UserInterface $user): int
     {
         $insert_id = $this->db->insert('users', ['login' => $user->getLogin(), 'password' => $user->getPassword()], 'ss');
         $user->setId($insert_id);
 
+        return $insert_id;
     }
 }

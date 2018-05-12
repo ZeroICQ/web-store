@@ -90,11 +90,14 @@ class LoginController extends BaseController
         $authInterval = new DateInterval('P30D');//30days
         $authCookie = new Cookie(self::authCookieName, $authCookieValue, $now->add($authInterval));
 
-        $this->response->headers->setCookie($authCookie);
 
         if (!$userToken->isAnonymous()) {
             $this->response = new RedirectResponse('/');
+            $this->response->headers->setCookie($authCookie);
+        } else {
+            $this->render('register.html.twig');
         }
+
 
         return $this->response;
 

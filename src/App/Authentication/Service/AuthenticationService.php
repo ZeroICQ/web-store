@@ -107,9 +107,12 @@ class AuthenticationService implements AuthenticationServiceInterface
     {
         $rawPass = $user->getPassword();
         $user->setPassword(UserPasswordEncoder::encodePassword($user->getPassword()));
-        $this->userRepository->save($user);
+        if (!$this->userRepository->save($user)) {
+            $user = null;
+        } else {
+            $user->setPassword($rawPass);
+        }
 
-        $user->setPassword($rawPass);
         return new UserToken($user);
     }
 }
