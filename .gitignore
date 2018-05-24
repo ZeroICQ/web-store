@@ -3,3 +3,4 @@ dump
 .idea
 vendor
 cov
+docker/php/custom/php.ini

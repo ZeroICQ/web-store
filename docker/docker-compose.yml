@@ -54,3 +54,10 @@ services:
             PMA_PORT: 3306
           depends_on:
             - mysql
+#
+#    nodejs:
+#          image: node:9.11.1
+#          volumes:
+#              - ..:/data
+#          working_dir: /data/
+#          command: npm update

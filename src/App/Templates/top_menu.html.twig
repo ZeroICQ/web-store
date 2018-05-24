@@ -1,0 +1,27 @@
+<div class="sixteen wide column">
+
+    <div class="ui attached stackable menu">
+        <div class="ui container">
+            <a class="item {% if activePage == 'home' %} active {% endif %}" href="/">
+                Sign In
+            </a>
+            <a class="item {% if activePage == 'register' %} active {% endif %}" href="/register">
+                Register
+            </a>
+
+            {% if userToken and not userToken.isAnonymous() %}
+                <div class="right menu">
+                    <div class="ui simple dropdown item">
+                            {{ userToken.getUser().getLogin() }}
+                        <div class="menu">
+                            <a class="item" href="/profile">
+                                Profile
+                            </a>
+                            <a class="item" href="/logout">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

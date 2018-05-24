@@ -4,14 +4,24 @@
     {% block head %}
         <meta charset="UTF-8">
         <title>Memes web store</title>
-        <link rel="stylesheet" href="{{static_path('css/normalize.css')}}">
-        <link rel="stylesheet" href="{{static_path('css/skeleton.css')}}">
+        <link rel="stylesheet" href="{{static_path('semantic.min.css')}}">
     {% endblock %}
 </head>
 <body>
-    <div class="container">
-        {% block content %}
+    <div class="ui grid">
+        {% block topMenu %}
         {% endblock %}
+
+        <div class="eight wide column centered">
+            {% block content %}
+            {% endblock %}
+        </div>
     </div>
+
+
+    {% block scripts %}
+        <script src="{{ static_path('jquery-3.3.1.min.js') }}"></script>
+        <script src="{{ static_path('semantic.min.js') }}"></script>
+    {% endblock %}
 </body>
 </html>

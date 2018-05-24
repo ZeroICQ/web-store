@@ -36,7 +36,7 @@ class LoginController extends BaseController
                 $data['noPassword'] = strlen($rawLogin)    < 1 ;
                 $data['noLogin']    = strlen($rawPassword) < 1 ;
 
-                $this->render('signIn.html.twig', $data);
+                $this->render('sign_in.html.twig', $data);
                 return $this->response;
             }
 
@@ -53,7 +53,8 @@ class LoginController extends BaseController
             $data['login'] = $userToken->getUser()->getLogin();
         }
 
-        $this->render('signIn.html.twig', $data);
+        $data['userToken'] = $userToken;
+        $this->render('sign_in.html.twig', $data);
 
         return $this->response;
     }
@@ -64,8 +65,12 @@ class LoginController extends BaseController
      */
     public function registerAction(): Response
     {
+        $authCookieValue = $this->request->cookies->get(self::authCookieName);
+        $userToken = $this->container->get(AuthenticationService::class)->authenticate($authCookieValue);
+        $data['userToken'] = $userToken;
+
         if (!$this->isPost()) {
-            $this->render('register.html.twig');
+            $this->render('register.html.twig', $data);
             return $this->response;
         }
 
@@ -92,6 +97,7 @@ class LoginController extends BaseController
     /**
      * @return Response
      */
+
     public function logoutAction() : Response
     {
         $this->response = new RedirectResponse('/');

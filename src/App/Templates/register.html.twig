@@ -1,29 +1,22 @@
 {% extends "index.html.twig" %}
 
+{% block topMenu %}
+    {% include 'top_menu.html.twig' with {'activePage': 'register'} %}
+{% endblock %}
+
 {% block content %}
     <h1>Register</h1>
-    {% for error in sql_errors %}
-        <div class="row">
-            {{ error['error'] }}
-        </div>
-    {% endfor %}
 
-    <form method="post">
-        <div class="row">
-            <label for="login">Login</label>
-            <input id="login" name="login" type="text">
+    <form class="ui form" method="post">
+        <div class="required field">
+            <label>Login</label>
+            <input type="text" name="login" placeholder="Username">
         </div>
-        <div class="row">
-            <label for="password">Password</label>
-            <input name="password" id="password" type="password">
+        <div class="required field">
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Password">
         </div>
-        <div class="row">
-            <input class="button-primary" type="submit" value="Register">
-        </div>
-</form>
-
-    <div class="row">
-        <a href="/signIn" class="button">sign In</a>
-    </div>
+        <button class="ui button" type="submit">Register</button>
+    </form>
 
 {% endblock %}

@@ -1,0 +1,31 @@
+{% extends "index.html.twig" %}
+
+{% block topMenu %}
+    {% include 'top_menu.html.twig' with {'activePage': 'home'} %}
+{% endblock %}
+
+{% block content %}
+    <h1>Sign In</h1>
+
+    {% if not login is null %}
+        <div class="row">
+            hello, {{ login }}
+        </div>
+        <div class="row">
+            <a href="/logout" class="button">Logout</a>
+        </div>
+    {% else %}
+        <form class="ui form" method="post">
+            <div class="required field">
+                <label>Login</label>
+                <input type="text" name="login" placeholder="Username">
+            </div>
+            <div class="required field">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Password">
+            </div>
+            <button class="ui button" type="submit">Sign in</button>
+        </form>
+
+    {% endif %}
+{% endblock %}

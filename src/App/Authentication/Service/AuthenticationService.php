@@ -48,7 +48,11 @@ class AuthenticationService implements AuthenticationServiceInterface
         $credentials = base64_decode($credentials);
 
         $nonce = substr($credentials,0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
-        $cipher = substr($credentials,SODIUM_CRYPTO_SECRETBOX_NONCEBYTES, strlen($credentials) - SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+
+        $cipher = substr(
+            $credentials,SODIUM_CRYPTO_SECRETBOX_NONCEBYTES,
+            strlen($credentials) - SODIUM_CRYPTO_SECRETBOX_NONCEBYTES
+        );
 
         try {
             $decr = json_decode(sodium_crypto_secretbox_open($cipher, $nonce, $this->key), true);
