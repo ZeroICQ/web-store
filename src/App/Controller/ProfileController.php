@@ -4,6 +4,7 @@
 namespace App\Controller;
 
 use App\Authentication\Repository\UserInfoRepository;
+use App\Authentication\User;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProfileController extends BaseController
@@ -23,16 +24,26 @@ class ProfileController extends BaseController
 
     public function editProfileAction()
     {
-        //
-//        $userToken = $this->container->get(AuthenticationService::class)->authenticate($authCookieValue);
+        $data = [];
+        $authCookieValue = $this->request->cookies->get(User::authCookieName);
+
+        $userToken = $this->container->get(AuthenticationService::class)->authenticate($authCookieValue);
+
+//        if ($this->isPost()) {
 //
-//        if ($userToken->isAnonymous())
-//        {
-//            return $this->response;
 //        }
-//
-//        $userInfo = $this->container->get(UserInfoRepository::class)->getInfo($userToken->getUser()->getId());
-//        $this->render('viewProfile.html.twig', $data);
+
+        //TODO:continue
+
+        $data['userToken'] = $userToken;
+
+        if ($userToken->isAnonymous())
+        {
+            return $this->response;
+        }
+
+        $userInfo = $this->container->get(UserInfoRepository::class)->getInfo($userToken->getUser()->getId());
+        $this->render('viewProfile.html.twig', $data);
 
     }
 }

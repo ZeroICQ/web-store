@@ -42,6 +42,8 @@ class Router
                 return (new LoginController($this->container, $request))->logoutAction();
             case '/profile':
                 return (new ProfileController($this->container, $request))->viewProfileAction();
+            case '/edit':
+                return (new ProfileController($this->container, $request))->editProfileAction();
             default:
                 return new Response("404", 404);
         }
