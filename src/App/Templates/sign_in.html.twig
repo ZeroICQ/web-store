@@ -7,9 +7,9 @@
 {% block content %}
     <h1>Sign In</h1>
 
-    {% if not login is null %}
+    {% if userToken and not userToken.isAnonymous() %}
         <div class="row">
-            hello, {{ login }}
+            hello, {{ userToken.getUser().getLogin() }}
         </div>
         <div class="row">
             <a href="/logout" class="button">Logout</a>

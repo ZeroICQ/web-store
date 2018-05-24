@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Authentication\Repository\UserInfoRepository;
 use App\Authentication\Repository\UserRepository;
 use App\Authentication\Service\AuthenticationService;
 use App\ORM\DB;
@@ -52,9 +53,16 @@ class MicroKernel
                 'app'
             ]);
 
+        #user info repository
+        $this->container->register(UserInfoRepository::class, UserInfoRepository::class)
+            ->setArguments([new Reference(DB::class)]);
+
         //user repository
         $this->container->register(UserRepository::class, UserRepository::class)
-            ->setArguments([new Reference(DB::class)]);
+            ->setArguments([
+                new Reference(DB::class),
+                new Reference(UserInfoRepository::class)
+            ]);
 
         //auth service
         $this->container->register(AuthenticationService::class, AuthenticationService::class)

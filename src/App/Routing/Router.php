@@ -4,6 +4,7 @@ namespace App\Routing;
 
 
 use App\Controller\LoginController;
+use App\Controller\ProfileController;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,6 +31,7 @@ class Router
         $URI = explode('?', $request->getRequestUri())[0];
 
         //TODO: get rid of copypaste
+
         switch ($URI) {
             case '/':
             case '/signIn':
@@ -38,6 +40,8 @@ class Router
                 return (new LoginController($this->container, $request))->registerAction();
             case '/logout':
                 return (new LoginController($this->container, $request))->logoutAction();
+            case '/profile':
+                return (new ProfileController($this->container, $request))->profileAction();
             default:
                 return new Response("404", 404);
         }

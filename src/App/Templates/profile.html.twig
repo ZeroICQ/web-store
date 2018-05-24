@@ -1,0 +1,10 @@
+{% extends "index.html.twig" %}
+
+{% block topMenu %}
+    {% include 'top_menu.html.twig' with {'activePage': 'profile'} %}
+{% endblock %}
+
+{% block content %}
+    {% if userToken and not userToken.isAnonymous() %}
+    {% endif %}
+{% endblock %}

@@ -6,9 +6,26 @@ namespace App\Authentication\Repository;
 
 use App\Authentication\User;
 use App\Authentication\UserInterface;
+use App\ORM\DB;
 
 class UserRepository extends BaseRepository implements UserRepositoryInterface
 {
+    /**
+     * @var UserInfoRepository
+     */
+    private $infoRepository;
+
+    /**
+     * UserRepository constructor.
+     * @param DB $db
+     * @param UserInfoRepository $infoRepository
+     */
+    public function __construct(DB $db, UserInfoRepository $infoRepository)
+    {
+        parent::__construct($db);
+        $this->infoRepository = $infoRepository;
+    }
+
 
     /**
      * Метод ищет пользователя по индентификатору, возвращает UserInterface если пользователь существует, иначе null
@@ -56,8 +73,21 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
      */
     public function save(UserInterface $user): int
     {
-        $insert_id = $this->db->insert('users', ['login' => $user->getLogin(), 'password' => $user->getPassword()], 'ss');
+        $this->db->startTransaction();
+        $user_insert_id = $this->db->insert('users', ['login' => $user->getLogin(), 'password' => $user->getPassword()], 'ss');
 
-        return $insert_id;
+        if (!$user_insert_id) {
+            $this->db->rollback();
+            return 0;
+        }
+
+        $info_id = $this->infoRepository->saveEmpty($user_insert_id);
+        if (!$info_id) {
+            $this->db->rollback();
+            return 0;
+        }
+
+        $this->db->commit();
+        return $user_insert_id;
     }
 }

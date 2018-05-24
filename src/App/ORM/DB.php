@@ -96,4 +96,18 @@ class DB
         return $insert_id;
     }
 
+    public function startTransaction()
+    {
+        $this->connection->begin_transaction();
+    }
+
+    public function commit()
+    {
+        $this->connection->commit();
+    }
+
+    public function rollback()
+    {
+        $this->connection->rollback();
+    }
 }

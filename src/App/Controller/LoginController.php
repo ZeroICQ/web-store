@@ -4,6 +4,7 @@ namespace App\Controller;
 
 
 use App\Authentication\Service\AuthenticationService;
+use App\Authentication\User;
 use DateInterval;
 use DateTime;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -12,12 +13,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class LoginController extends BaseController
 {
-    /*
-     * @var string
-     * ASK: where to put?
-     */
-    private const authCookieName = 'auth_cookie';
-
     /**
      * @return Response
      * @throws \Exception
@@ -25,7 +20,7 @@ class LoginController extends BaseController
     public function signInAction() : Response
     {
         $data = [];
-        $authCookieValue = $this->request->cookies->get(self::authCookieName);
+        $authCookieValue = $this->request->cookies->get(User::authCookieName);
 
         if ($this->isPost()) {
 
@@ -43,15 +38,11 @@ class LoginController extends BaseController
             $authCookieValue = $this->container->get(AuthenticationService::class)
                 ->generateCredentials($rawLogin, $rawPassword);
 
-            $authCookie = $this->get30DaysCookie(self::authCookieName, $authCookieValue);
+            $authCookie = $this->get30DaysCookie(User::authCookieName, $authCookieValue);
             $this->response->headers->setCookie($authCookie);
         }
 
         $userToken = $this->container->get(AuthenticationService::class)->authenticate($authCookieValue);
-
-        if (!$userToken->isAnonymous()) {
-            $data['login'] = $userToken->getUser()->getLogin();
-        }
 
         $data['userToken'] = $userToken;
         $this->render('sign_in.html.twig', $data);
@@ -65,7 +56,7 @@ class LoginController extends BaseController
      */
     public function registerAction(): Response
     {
-        $authCookieValue = $this->request->cookies->get(self::authCookieName);
+        $authCookieValue = $this->request->cookies->get(User::authCookieName);
         $userToken = $this->container->get(AuthenticationService::class)->authenticate($authCookieValue);
         $data['userToken'] = $userToken;
 
@@ -81,7 +72,7 @@ class LoginController extends BaseController
         $authCookieValue = $this->container->get(AuthenticationService::class)
             ->generateCredentials($login, $rawPassword);
 
-        $authCookie = $this->get30DaysCookie(self::authCookieName, $authCookieValue);
+        $authCookie = $this->get30DaysCookie(User::authCookieName, $authCookieValue);
         $this->response->headers->setCookie($authCookie);
 
         if (!$userToken->isAnonymous()) {
@@ -101,7 +92,7 @@ class LoginController extends BaseController
     public function logoutAction() : Response
     {
         $this->response = new RedirectResponse('/');
-        $this->response->headers->clearCookie(self::authCookieName);
+        $this->response->headers->clearCookie(User::authCookieName);
         return $this->response;
     }
 

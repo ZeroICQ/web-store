@@ -8,6 +8,8 @@ use phpDocumentor\Reflection\Types\Null_;
 
 class User implements UserInterface
 {
+    public const authCookieName = 'auth_cookie';
+
     /**
      * @var int|null
      */
