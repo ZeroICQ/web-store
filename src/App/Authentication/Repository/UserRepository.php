@@ -40,7 +40,6 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
 
         $result = $this->db->selectFirstSimpleEqCond('users', ['id, password'], 'login', $login, 's');
 
-
         $user = null;
         if ($result) {
             $user = new User($result['id'], $login, $result['password']);
@@ -58,7 +57,6 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     public function save(UserInterface $user): int
     {
         $insert_id = $this->db->insert('users', ['login' => $user->getLogin(), 'password' => $user->getPassword()], 'ss');
-        $user->setId($insert_id);
 
         return $insert_id;
     }

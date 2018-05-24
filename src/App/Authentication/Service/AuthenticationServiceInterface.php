@@ -39,8 +39,9 @@ interface AuthenticationServiceInterface
     /**
      * Метод генерирует authentication credentials
      *
-     * @param UserInterface $user
+     * @param string $login
+     * @param string $password
      * @return mixed
      */
-    public function generateCredentials(UserInterface $user);
+    public function generateCredentials(string $login, string $password);
 }

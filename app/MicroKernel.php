@@ -36,7 +36,7 @@ class MicroKernel
             ->setArguments([
                 $twig_loader,
                 [
-//                    'debug' => true,
+//                  'debug' => true,
                     'cache' => $this->getCacheDir(),
                     'auto_reload' => true
                 ]
@@ -58,7 +58,7 @@ class MicroKernel
 
         //auth service
         $this->container->register(AuthenticationService::class, AuthenticationService::class)
-            ->setArguments([new Reference(UserRepository::class), $this->getKey(), $this->getSecret()]);
+            ->setArguments([new Reference(UserRepository::class), $this->getKey()]);
 
         //router
         $this->router = new Router($this->container);
@@ -105,15 +105,6 @@ class MicroKernel
     public function getKey(): string
     {
         return 'iopdasojijioajscx,mzmc,z.xmiwqje';
-    }
-
-    /**
-     * Get verification secret for auth cookie
-     * @return string
-     */
-    public function getSecret(): string
-    {
-        return 'dsdopo[okmvcxnigauhxzh';
     }
 
     /**

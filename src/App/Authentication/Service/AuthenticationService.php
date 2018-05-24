@@ -7,10 +7,8 @@ namespace App\Authentication\Service;
 use App\Authentication\Encoder\UserPasswordEncoder;
 use App\Authentication\Repository\UserRepository;
 use App\Authentication\User;
-use App\Authentication\UserInterface;
 use App\Authentication\UserToken;
 use App\Authentication\UserTokenInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
 
 class AuthenticationService implements AuthenticationServiceInterface
 {
@@ -22,10 +20,6 @@ class AuthenticationService implements AuthenticationServiceInterface
      * @var string
      */
     private $key;
-    /**
-     * @var string
-     */
-    private $secret;
 
     /**
      * AuthenticationService constructor.
@@ -33,11 +27,10 @@ class AuthenticationService implements AuthenticationServiceInterface
      * @param string $key
      * @param string $secret
      */
-    public function __construct(UserRepository $userRepository, string $key, string $secret)
+    public function __construct(UserRepository $userRepository, string $key)
     {
         $this->userRepository = $userRepository;
         $this->key = $key;
-        $this->secret = $secret;
     }
 
     /**
@@ -56,7 +49,6 @@ class AuthenticationService implements AuthenticationServiceInterface
 
         $nonce = substr($credentials,0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
         $cipher = substr($credentials,SODIUM_CRYPTO_SECRETBOX_NONCEBYTES, strlen($credentials) - SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
-//        [$nonce, $cipher] = str_split(base64_decode($credentials), SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
 
         try {
             $decr = json_decode(sodium_crypto_secretbox_open($cipher, $nonce, $this->key), true);
@@ -65,30 +57,35 @@ class AuthenticationService implements AuthenticationServiceInterface
             return new UserToken(null);
         }
 
-        if ($decr && key_exists('user', $decr) && key_exists('secret', $decr) && $decr['secret'] == $this->secret &&
-            strlen($nonce) == SODIUM_CRYPTO_SECRETBOX_NONCEBYTES) {
-            $user = $this->userRepository->findByLogin($decr['user']);
-        } else {
-            $user = null;
+        if ($decr && key_exists('login', $decr) && key_exists('passwordHash', $decr)
+            && strlen($nonce) == SODIUM_CRYPTO_SECRETBOX_NONCEBYTES
+        ) {
+            $user = $this->userRepository->findByLogin($decr['login']);
+
+            if ($user && $user->getPassword() == $decr['passwordHash']) {
+                return new UserToken($user);
+            }
         }
 
-        return new UserToken($user);
+        return new UserToken(null);
     }
 
     /**
      * Метод генерирует authentication credentials
      *
-     * @param UserInterface $user
+     * @param string $login
+     * @param string $rawPassword
      * @return mixed
+     * @throws \Exception
      */
-    public function generateCredentials(UserInterface $user): string
+    public function generateCredentials(string $login, string $rawPassword): string
     {
-        $userFromDB = $this->userRepository->findByLogin($user->getLogin());
+        $user = $this->userRepository->findByLogin($login);
 
-        if ($userFromDB && password_verify($user->getPassword(), $userFromDB->getPassword())) {
+        if ($user && password_verify($rawPassword, $user->getPassword())) {
             $cookieStructure = [
-                'user'   => $userFromDB->getLogin(),
-                'secret' => $this->secret
+                'login'        => $user->getLogin(),
+                'passwordHash' => $user->getPassword()
             ];
 
             // Using your key to encrypt information
@@ -96,23 +93,26 @@ class AuthenticationService implements AuthenticationServiceInterface
             $ciphertext = sodium_crypto_secretbox(json_encode($cookieStructure), $nonce, $this->key);
             return base64_encode($nonce.$ciphertext);
         }
+        //no such user or password mismatch
         return '';
     }
 
     /**
-     * @param UserInterface $user
+     * @param string $login
+     * @param string $rawPassword
      * @return UserToken
      */
-    public function registerUser(UserInterface $user) : UserToken
+    public function registerUser(string $login, string $rawPassword) : UserToken
     {
-        $rawPass = $user->getPassword();
-        $user->setPassword(UserPasswordEncoder::encodePassword($user->getPassword()));
-        if (!$this->userRepository->save($user)) {
-            $user = null;
-        } else {
-            $user->setPassword($rawPass);
+        $cryptedPassword = UserPasswordEncoder::encodePassword($rawPassword);
+        $user = new User(null, $login, $cryptedPassword);
+
+        $userId = $this->userRepository->save($user);
+
+        if ($userId) {
+            return new UserToken(new User($userId, $login, $cryptedPassword));
         }
 
-        return new UserToken($user);
+        return new UserToken(null);
     }
 }

@@ -17,11 +17,6 @@ interface UserInterface
 	 */
 	public function getId(): ?int;
 
-    /**
-     * @param int $id
-     */
-    public function setId(int $id);
-
 	/**
 	 * Метод возвращает логин пользователя. Логин является уникальным свойством.
 	 *
@@ -35,10 +30,4 @@ interface UserInterface
 	 * @return string|null
 	 */
 	public function getPassword(): ?string;
-
-    /**
-     * @param string $pass
-     * @return mixed
-     */
-    public function setPassword(string $pass);
 }
