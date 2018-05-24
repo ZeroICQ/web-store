@@ -4,26 +4,35 @@
 namespace App\Controller;
 
 use App\Authentication\Repository\UserInfoRepository;
-use App\Authentication\Service\AuthenticationService;
-use App\Authentication\User;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProfileController extends BaseController
 {
-    public function profileAction() : Response
+    public function viewProfileAction() : Response
     {
         $data = [];
-        $authCookieValue = $this->request->cookies->get(User::authCookieName);
+        $userId = $this->request->query->getDigits('id', 0);
 
-        $userToken = $this->container->get(AuthenticationService::class)->authenticate($authCookieValue);
-
-        if ($userToken->isAnonymous())
-        {
-            return $this->response;
+        if ($userId) {
+            $data['userInfo']  = $this->container->get(UserInfoRepository::class)->getInfo($userId);
         }
 
-        $userInfo = $this->container->get(UserInfoRepository::class)->getInfo($userToken->getUser()->getId());
-        $this->render('profile.html.twig', $data);
+        $this->render('viewProfile.html.twig', $data);
         return $this->response;
+    }
+
+    public function editProfileAction()
+    {
+        //
+//        $userToken = $this->container->get(AuthenticationService::class)->authenticate($authCookieValue);
+//
+//        if ($userToken->isAnonymous())
+//        {
+//            return $this->response;
+//        }
+//
+//        $userInfo = $this->container->get(UserInfoRepository::class)->getInfo($userToken->getUser()->getId());
+//        $this->render('viewProfile.html.twig', $data);
+
     }
 }

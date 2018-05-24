@@ -1,0 +1,43 @@
+{% extends "index.html.twig" %}
+
+{% block topMenu %}
+    {% include 'top_menu.html.twig' with {'activePage': 'profile'} %}
+{% endblock %}
+
+{% block content %}
+    {% if userInfo %}
+        <div class="ui eight column grid">
+            <div class="seven column row">
+                <div class="column"><h3>First name</h3></div>
+            </div>
+            <div class="row">
+                <div class="column"></div>
+                <div class="column">{{ userInfo.getFirstName() }}</div>
+            </div>
+
+            <div class="seven column row">
+                <div class="column"><h3>Second name</h3></div>
+            </div>
+            <div class="row">
+                <div class="column"></div>
+                <div class="column">{{ userInfo.getSecondName() }}</div>
+            </div>
+
+            <div class="seven column row">
+                <div class="column"><h3>Bio</h3></div>
+            </div>
+            <div class="row">
+                <div class="column"></div>
+                <div class="column">{{ userInfo.getBiography() }}</div>
+            </div>
+
+            <div class="seven column row">
+                <div class="column"><h3>Workplace</h3></div>
+            </div>
+            <div class="row">
+                <div class="column"></div>
+                <div class="column">{{ userInfo.getWorkplace() }}</div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
