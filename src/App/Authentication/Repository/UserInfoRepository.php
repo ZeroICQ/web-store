@@ -39,4 +39,23 @@ class UserInfoRepository extends BaseRepository
             ...array_values($res)
         );
     }
+
+    /**
+     * @param int $userId
+     * @param string $firstName
+     * @param string $secondName
+     * @param string $workPlace
+     * @param string $biography
+     * @return bool
+     */
+    public function updateInfo(int $userId, string $firstName, string $secondName, string $workPlace, string $biography): bool
+    {
+        return $this->db->update('user_info',[
+            'first_name'  => $firstName,
+            'second_name' => $secondName,
+            'work_place'  => $workPlace,
+            'biography'   => $biography
+        ], 'user_id', $userId, 'ssssi');
+    }
+
 }

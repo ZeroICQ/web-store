@@ -4,6 +4,7 @@
 namespace App\Controller;
 
 use App\Authentication\Repository\UserInfoRepository;
+use App\Authentication\Service\AuthenticationService;
 use App\Authentication\User;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -14,11 +15,15 @@ class ProfileController extends BaseController
         $data = [];
         $userId = $this->request->query->getDigits('id', 0);
 
+        $authCookieValue = $this->request->cookies->get(User::authCookieName);
+        $userToken = $this->container->get(AuthenticationService::class)->authenticate($authCookieValue);
+        $data['userToken'] = $userToken;
+
         if ($userId) {
             $data['userInfo']  = $this->container->get(UserInfoRepository::class)->getInfo($userId);
         }
 
-        $this->render('viewProfile.html.twig', $data);
+        $this->render('view_profile.html.twig', $data);
         return $this->response;
     }
 
@@ -26,15 +31,7 @@ class ProfileController extends BaseController
     {
         $data = [];
         $authCookieValue = $this->request->cookies->get(User::authCookieName);
-
         $userToken = $this->container->get(AuthenticationService::class)->authenticate($authCookieValue);
-
-//        if ($this->isPost()) {
-//
-//        }
-
-        //TODO:continue
-
         $data['userToken'] = $userToken;
 
         if ($userToken->isAnonymous())
@@ -42,8 +39,25 @@ class ProfileController extends BaseController
             return $this->response;
         }
 
-        $userInfo = $this->container->get(UserInfoRepository::class)->getInfo($userToken->getUser()->getId());
-        $this->render('viewProfile.html.twig', $data);
+        if ($this->isPost()) {
+            $firstName  = $this->request->request->filter('firstName');
+            $secondName = $this->request->request->filter('secondName');
+            $workPlace  = $this->request->request->filter('workPlace');
+            $biography  = $this->request->request->filter('biography');
 
+            $this->container->get(UserInfoRepository::class)->updateInfo(
+                $userToken->getUser()->getId(),
+                $firstName,
+                $secondName,
+                $workPlace,
+                $biography
+            );
+        }
+
+        $data['userInfo'] = $this->container->get(UserInfoRepository::class)
+                                ->getInfo($userToken->getUser()->getId());
+
+        $this->render('edit_profile.html.twig', $data);
+        return $this->response;
     }
 }

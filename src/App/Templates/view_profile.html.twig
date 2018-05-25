@@ -1,7 +1,7 @@
 {% extends "index.html.twig" %}
 
 {% block topMenu %}
-    {% include 'top_menu.html.twig' with {'activePage': 'profile'} %}
+    {% include 'top_menu.html.twig' with {'activePage': 'editProfile'} %}
 {% endblock %}
 
 {% block content %}
@@ -38,6 +38,9 @@
                 <div class="column"></div>
                 <div class="column">{{ userInfo.getWorkplace() }}</div>
             </div>
+            <a href="/edit" class="ui secondary button">
+                Edit profile
+            </a>
         </div>
      {% else %}
         No such user

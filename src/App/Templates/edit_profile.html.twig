@@ -1,0 +1,33 @@
+{% extends "index.html.twig" %}
+
+{% block topMenu %}
+    {% include 'top_menu.html.twig' with {'activePage': 'editProfile'} %}
+{% endblock %}
+
+{% block content %}
+    {% if userInfo %}
+        <form class="ui form" method="post">
+            <div class="field">
+                <label>First name</label>
+                <input type="text" name="firstName" placeholder="first name" value="{{ userInfo.getFirstName() }}">
+            </div>
+            <div class="field">
+                <label>Second name</label>
+                <input type="text" name="secondName" placeholder="second name" value="{{ userInfo.getSecondName() }}">
+            </div>
+            <div class="field">
+                <label>Working place</label>
+                <input type="text" name="workPlace" placeholder="Google" value="{{ userInfo.getWorkPlace() }}">
+            </div>
+            <div class="field">
+                <label>Biography</label>
+                <textarea name="biography" rows="4" placeholder="Born to die">{{ userInfo.getBiography() }}</textarea>
+            </div>
+            <button class="ui button" type="submit">Save</button>
+        </form>
+
+        </div>
+    {% else %}
+        Please log in.
+    {% endif %}
+{% endblock %}

@@ -14,7 +14,7 @@
                     <div class="ui simple dropdown item">
                             {{ userToken.getUser().getLogin() }}
                         <div class="menu">
-                            <a class="item" href="/profile">
+                            <a class="item" href="/profile?id={{ userToken.getUser().getId() }}">
                                 Profile
                             </a>
                             <a class="item" href="/logout">Logout</a>

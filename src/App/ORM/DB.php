@@ -69,7 +69,7 @@ class DB
     public function selectFirstSimpleEqCond(string $table, array $fields, string $searchField, $val, string $valType)
     {
         $selectFields = implode(', ', $fields);
-        $stmt = $this->connection->prepare("SELECT  {$selectFields} FROM ${table} WHERE {$searchField} = ?");
+        $stmt = $this->connection->prepare("SELECT  {$selectFields} FROM {$table} WHERE {$searchField} = ?");
         $stmt->bind_param($valType, $val);
         $stmt->execute();
 
@@ -79,6 +79,12 @@ class DB
         return $result;
     }
 
+    /**
+     * @param string $table
+     * @param array $fields
+     * @param string $valTypes
+     * @return int
+     */
     public function insert(string $table, array $fields, string $valTypes): int
     {
         $insertFields = implode(',', array_keys($fields));
@@ -94,6 +100,30 @@ class DB
         $stmt->close();
 
         return $insert_id;
+    }
+
+    /**
+     * @param string $table
+     * @param array $fields
+     * @param string $searchField
+     * @param $val
+     * @param $valTypes
+     * @return bool
+     */
+    public function update(string $table, array $fields, string $searchField, $val, $valTypes): bool
+    {
+        $updateFields = implode(', ', array_map(function ($uVal) {return "{$uVal} = ?";}, array_keys($fields)));
+        $updateValues = array_values($fields);
+
+        $stmt = $this->connection->prepare(
+            "UPDATE {$table} SET $updateFields WHERE {$searchField} = ?");
+
+        array_push($updateValues, $val);
+        $stmt->bind_param($valTypes, ...$updateValues);
+        $result = $stmt->execute();
+        $stmt->close();
+
+        return $result;
     }
 
     public function startTransaction()
