@@ -108,7 +108,6 @@ class LoginController extends BaseController
         try {
             $authInterval = new DateInterval('P30D');
         } catch (\Exception $e) {
-            //really?
             $authInterval = 0;
         }
 

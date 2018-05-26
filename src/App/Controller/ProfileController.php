@@ -13,7 +13,7 @@ class ProfileController extends BaseController
     public function viewProfileAction() : Response
     {
         $data = [];
-        $userId = $this->request->query->getDigits('id', 0);
+        $userId = $this->request->query->getDigits('id', null);
 
         $authCookieValue = $this->request->cookies->get(User::authCookieName);
         $userToken = $this->container->get(AuthenticationService::class)->authenticate($authCookieValue);
