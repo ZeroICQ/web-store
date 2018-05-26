@@ -6,43 +6,25 @@
 
 {% block content %}
     {% if userInfo %}
-        <div class="ui eight column grid">
-            <div class="seven column row">
-                <div class="column"><h3>First name</h3></div>
-            </div>
-            <div class="row">
-                <div class="column"></div>
-                <div class="column">{{ userInfo.getFirstName() }}</div>
-            </div>
+        <div class="ui grid">
+            <div class="eight wide column"><h3>First name</h3></div>
+            <div class="eight wide column">{{ userInfo.getFirstName() }}</div>
 
-            <div class="seven column row">
-                <div class="column"><h3>Second name</h3></div>
-            </div>
-            <div class="row">
-                <div class="column"></div>
-                <div class="column">{{ userInfo.getSecondName() }}</div>
-            </div>
+            <div class="eight wide column"><h3>Second name</h3></div>
+            <div class="eight wide column">{{ userInfo.getSecondName() }}</div>
 
-            <div class="seven column row">
-                <div class="column"><h3>Bio</h3></div>
-            </div>
-            <div class="row">
-                <div class="column"></div>
-                <div class="column">{{ userInfo.getBiography() }}</div>
-            </div>
+            <div class="eight wide column"><h3>Workplace</h3></div>
+            <div class="eight wide column">{{ userInfo.getWorkplace() }}</div>
 
-            <div class="seven column row">
-                <div class="column"><h3>Workplace</h3></div>
-            </div>
-            <div class="row">
-                <div class="column"></div>
-                <div class="column">{{ userInfo.getWorkplace() }}</div>
-            </div>
+            <div class="eight wide column"><h3>Biography</h3></div>
+            <div class="eight wide column">{{ userInfo.getBiography() }}</div>
+
             <a href="/edit" class="ui secondary button">
                 Edit profile
             </a>
         </div>
-     {% else %}
+
+    {% else %}
         No such user
     {% endif %}
 {% endblock %}
