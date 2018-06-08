@@ -27,7 +27,7 @@ class UserInfoRepository extends BaseRepository implements UserInfoRepositoryInt
     public function getInfo(int $userId): ?UserInfoInterface
     {
         $res = $this->db->selectFirstSimpleEqCond('user_info',
-            ['biography', 'first_name', 'second_name', 'work_place'],
+            ['id', 'user_id', 'biography', 'first_name', 'second_name', 'work_place'],
             'user_id', $userId, 'i');
 
         if (!$res) {
@@ -35,8 +35,6 @@ class UserInfoRepository extends BaseRepository implements UserInfoRepositoryInt
         }
 
         return new UserInfo(
-            null,
-            $userId,
             ...array_values($res)
         );
     }

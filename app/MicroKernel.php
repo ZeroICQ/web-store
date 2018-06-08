@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Api\UserInfoApiController;
 use App\Authentication\Repository\UserInfoRepository;
 use App\Authentication\Repository\UserRepository;
 use App\Authentication\Service\AuthenticationService;
@@ -89,6 +90,13 @@ class MicroKernel
                 $request,
                 new Reference(Twig_Environment::class),
                 new Reference(AuthenticationService::class),
+                new Reference(UserInfoRepository::class)
+            ]);
+
+        //UserInfoApiController
+        $this->container->register(UserInfoApiController::class, UserInfoApiController::class)
+            ->setArguments([
+                $request,
                 new Reference(UserInfoRepository::class)
             ]);
 

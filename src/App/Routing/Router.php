@@ -3,6 +3,7 @@
 namespace App\Routing;
 
 
+use App\Api\UserInfoApiController;
 use App\Controller\LoginController;
 use App\Controller\ProfileController;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -44,6 +45,8 @@ class Router
                 return $this->container->get(ProfileController::class)->viewProfileAction();
             case '/edit':
                 return $this->container->get(ProfileController::class)->editProfileAction();
+            case '/api/userinfo.json':
+                return $this->container->get(UserInfoApiController::class)->getInfoAction();
             default:
                 return new Response("404", 404);
         }

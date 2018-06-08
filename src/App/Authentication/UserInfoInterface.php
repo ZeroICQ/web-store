@@ -4,7 +4,7 @@
 namespace App\Authentication;
 
 
-interface UserInfoInterface
+interface UserInfoInterface extends \JsonSerializable
 {
     /**
      * @return int?
