@@ -3,19 +3,38 @@
 namespace App\Controller;
 
 
-use App\Authentication\Service\AuthenticationService;
+use App\Authentication\Service\AuthenticationServiceInterface;
 use App\Authentication\User;
 use DateInterval;
 use DateTime;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Twig_Environment;
 
 class LoginController extends BaseController
 {
     /**
+     * @var AuthenticationServiceInterface
+     */
+    private $authenticationService;
+
+    /**
+     * LoginController constructor.
+     * @param Request $request
+     * @param Twig_Environment $twig
+     * @param AuthenticationServiceInterface $authenticationService
+     */
+    public function __construct(Request $request, Twig_Environment $twig, AuthenticationServiceInterface $authenticationService)
+    {
+        parent::__construct($request, $twig);
+
+        $this->authenticationService = $authenticationService;
+    }
+
+    /**
      * @return Response
-     * @throws \Exception
      */
     public function signInAction() : Response
     {
@@ -35,14 +54,13 @@ class LoginController extends BaseController
                 return $this->response;
             }
 
-            $authCookieValue = $this->container->get(AuthenticationService::class)
-                ->generateCredentials($rawLogin, $rawPassword);
+            $authCookieValue = $this->authenticationService->generateCredentials($rawLogin, $rawPassword);
 
             $authCookie = $this->get30DaysCookie(User::authCookieName, $authCookieValue);
             $this->response->headers->setCookie($authCookie);
         }
 
-        $userToken = $this->container->get(AuthenticationService::class)->authenticate($authCookieValue);
+        $userToken = $this->authenticationService->authenticate($authCookieValue);
 
         $data['userToken'] = $userToken;
         $this->render('sign_in.html.twig', $data);
@@ -57,7 +75,7 @@ class LoginController extends BaseController
     public function registerAction(): Response
     {
         $authCookieValue = $this->request->cookies->get(User::authCookieName);
-        $userToken = $this->container->get(AuthenticationService::class)->authenticate($authCookieValue);
+        $userToken = $this->authenticationService->authenticate($authCookieValue);
         $data['userToken'] = $userToken;
 
         if (!$this->isPost()) {
@@ -68,9 +86,8 @@ class LoginController extends BaseController
         $login = $this->request->request->getAlnum('login');
         $rawPassword = $this->request->request->getAlnum('password');
 
-        $userToken = $this->container->get(AuthenticationService::class)->registerUser($login, $rawPassword);
-        $authCookieValue = $this->container->get(AuthenticationService::class)
-            ->generateCredentials($login, $rawPassword);
+        $userToken = $this->authenticationService->registerUser($login, $rawPassword);
+        $authCookieValue = $this->authenticationService->generateCredentials($login, $rawPassword);
 
         $authCookie = $this->get30DaysCookie(User::authCookieName, $authCookieValue);
         $this->response->headers->setCookie($authCookie);

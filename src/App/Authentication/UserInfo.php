@@ -4,7 +4,7 @@
 namespace App\Authentication;
 
 
-class UserInfo
+class UserInfo implements UserInfoInterface
 {
     /**
      * @var int?

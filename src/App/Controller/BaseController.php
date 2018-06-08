@@ -2,18 +2,12 @@
 
 namespace App\Controller;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Twig_Environment;
 
 abstract class BaseController
 {
-    /**
-     * @var ContainerBuilder
-     */
-    protected $container;
-
     /**
      * @var Request
      */
@@ -23,16 +17,20 @@ abstract class BaseController
      * @var Response
      */
     protected $response;
+    /**
+     * @var Twig_Environment
+     */
+    protected $twig;
 
     /**
      * BaseController constructor.
-     * @param ContainerBuilder $container
      * @param Request $request
+     * @param Twig_Environment $twig
      */
-    public function __construct(ContainerBuilder $container, Request $request)
+    public function __construct(Request $request, Twig_Environment $twig)
     {
-        $this->container = $container;
         $this->request = $request;
+        $this->twig = $twig;
 
         $this->response = new Response();
     }
@@ -57,10 +55,15 @@ abstract class BaseController
      * @param string $templateName
      * @param array $params
      * @return bool
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
     protected function render(string $templateName, array $params = []): bool
     {
-        $this->response->setContent($this->container->get(Twig_Environment::class)->render($templateName, $params));
+        $content = $this->twig->render($templateName, $params);
+
+        $this->response->setContent($content);
         return true;
     }
 }

@@ -5,8 +5,9 @@ namespace App\Authentication\Repository;
 
 
 use App\Authentication\UserInfo;
+use App\Authentication\UserInfoInterface;
 
-class UserInfoRepository extends BaseRepository
+class UserInfoRepository extends BaseRepository implements UserInfoRepositoryInterface
 {
     /**
      * @param int $userId
@@ -21,9 +22,9 @@ class UserInfoRepository extends BaseRepository
 
     /**
      * @param int $userId
-     * @return UserInfo|null
+     * @return UserInfoInterface|null
      */
-    public function getInfo(int $userId): ?UserInfo
+    public function getInfo(int $userId): ?UserInfoInterface
     {
         $res = $this->db->selectFirstSimpleEqCond('user_info',
             ['biography', 'first_name', 'second_name', 'work_place'],

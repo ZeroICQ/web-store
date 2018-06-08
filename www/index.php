@@ -8,9 +8,10 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 $URI = $_SERVER['REQUEST_URI'];
 
-$kernel = new MicroKernel();
-
 $request = Request::createFromGlobals();
+
+$kernel = new MicroKernel($request);
+
 
 $response = $kernel->handleRequest($request);
 

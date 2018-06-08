@@ -4,6 +4,8 @@
 use App\Authentication\Repository\UserInfoRepository;
 use App\Authentication\Repository\UserRepository;
 use App\Authentication\Service\AuthenticationService;
+use App\Controller\LoginController;
+use App\Controller\ProfileController;
 use App\ORM\DB;
 use App\Twig\StaticPathExtension;
 use App\Routing\Router;
@@ -25,7 +27,11 @@ class MicroKernel
     private $router;
 
 
-    public function __construct()
+    /**
+     * MicroKernel constructor.
+     * @param Request $request
+     */
+    public function __construct(Request $request)
     {
         //di
         $this->container = new ContainerBuilder();
@@ -53,7 +59,7 @@ class MicroKernel
                 'app'
             ]);
 
-        #user info repository
+        //user info repository
         $this->container->register(UserInfoRepository::class, UserInfoRepository::class)
             ->setArguments([new Reference(DB::class)]);
 
@@ -68,9 +74,26 @@ class MicroKernel
         $this->container->register(AuthenticationService::class, AuthenticationService::class)
             ->setArguments([new Reference(UserRepository::class), $this->getKey()]);
 
+
+        //LoginController
+        $this->container->register(LoginController::class, LoginController::class)
+            ->setArguments([
+                $request,
+                new Reference(Twig_Environment::class),
+                new Reference(AuthenticationService::class)
+                ]);
+
+        //ProfileController
+        $this->container->register(ProfileController::class, ProfileController::class)
+            ->setArguments([
+                $request,
+                new Reference(Twig_Environment::class),
+                new Reference(AuthenticationService::class),
+                new Reference(UserInfoRepository::class)
+            ]);
+
         //router
         $this->router = new Router($this->container);
-
     }
 
     /**

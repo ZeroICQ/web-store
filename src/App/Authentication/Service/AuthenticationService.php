@@ -5,7 +5,7 @@ namespace App\Authentication\Service;
 
 
 use App\Authentication\Encoder\UserPasswordEncoder;
-use App\Authentication\Repository\UserRepository;
+use App\Authentication\Repository\UserRepositoryInterface;
 use App\Authentication\User;
 use App\Authentication\UserToken;
 use App\Authentication\UserTokenInterface;
@@ -13,7 +13,7 @@ use App\Authentication\UserTokenInterface;
 class AuthenticationService implements AuthenticationServiceInterface
 {
     /**
-     * @var UserRepository
+     * @var UserRepositoryInterface
      */
     private $userRepository;
     /**
@@ -23,11 +23,10 @@ class AuthenticationService implements AuthenticationServiceInterface
 
     /**
      * AuthenticationService constructor.
-     * @param UserRepository $userRepository
+     * @param UserRepositoryInterface $userRepository
      * @param string $key
-     * @param string $secret
      */
-    public function __construct(UserRepository $userRepository, string $key)
+    public function __construct(UserRepositoryInterface $userRepository, string $key)
     {
         $this->userRepository = $userRepository;
         $this->key = $key;

@@ -35,15 +35,15 @@ class Router
         switch ($URI) {
             case '/':
             case '/signIn':
-                return (new LoginController($this->container, $request))->signInAction();
+                return $this->container->get(LoginController::class)->signInAction();
             case '/register':
-                return (new LoginController($this->container, $request))->registerAction();
+                return $this->container->get(LoginController::class)->registerAction();
             case '/logout':
-                return (new LoginController($this->container, $request))->logoutAction();
+                return $this->container->get(LoginController::class)->logoutAction();
             case '/profile':
-                return (new ProfileController($this->container, $request))->viewProfileAction();
+                return $this->container->get(ProfileController::class)->viewProfileAction();
             case '/edit':
-                return (new ProfileController($this->container, $request))->editProfileAction();
+                return $this->container->get(ProfileController::class)->editProfileAction();
             default:
                 return new Response("404", 404);
         }
