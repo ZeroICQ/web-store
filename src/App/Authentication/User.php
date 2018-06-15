@@ -4,8 +4,6 @@
 namespace App\Authentication;
 
 
-use phpDocumentor\Reflection\Types\Null_;
-
 class User implements UserInterface
 {
     public const authCookieName = 'auth_cookie';
@@ -24,18 +22,24 @@ class User implements UserInterface
      * @var string|null
      */
     private $password;
+    /**
+     * @var UserInfoInterface|null
+     */
+    private $userInfo;
 
     /**
      * User constructor.
      * @param int|null $id
      * @param string $login
      * @param string $password
+     * @param UserInfoInterface|null $userInfo
      */
-    public function __construct(?int $id, string $login, string $password)
+    public function __construct(?int $id, string $login, string $password, UserInfoInterface $userInfo = null)
     {
         $this->id = $id;
         $this->login = strlen($login) > 0 ? strtolower($login) : null;
         $this->password = strlen($password) > 0 ? $password : null;
+        $this->userInfo = $userInfo;
     }
 
 
@@ -69,4 +73,38 @@ class User implements UserInterface
     {
         return $this->password;
     }
+
+    /**
+     * @return UserInfoInterface|null
+     */
+    public function getUserInfo(): ?UserInfoInterface
+    {
+        return $this->userInfo;
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
+    {
+        $json = [
+            'id'    => $this->id,
+            'login' => $this->login
+        ];
+
+        if ($this->userInfo) {
+            $json = array_merge($json, [
+                'biography'  => $this->userInfo->getBiography(),
+                'firstName'  => $this->userInfo->getFirstName(),
+                'secondName' => $this->userInfo->getSecondName(),
+                'workPlace'  => $this->userInfo->getWorkPlace()
+            ]);
+        }
+        return $json;
+    }
+
 }

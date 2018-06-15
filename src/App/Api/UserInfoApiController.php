@@ -4,26 +4,26 @@
 namespace App\Api;
 
 
-use App\Authentication\Repository\UserInfoRepositoryInterface;
+use App\Authentication\Repository\UserRepositoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class UserInfoApiController extends BaseApiController
 {
     /**
-     * @var UserInfoRepositoryInterface
+     * @var UserRepositoryInterface
      */
-    private $userInfoRepository;
+    private $userRepository;
 
     /**
      * UserInfoApiController constructor.
      * @param Request $request
-     * @param UserInfoRepositoryInterface $userInfoRepository
+     * @param UserRepositoryInterface $userRepository
      */
-    public function __construct(Request $request, UserInfoRepositoryInterface $userInfoRepository)
+    public function __construct(Request $request, UserRepositoryInterface $userRepository)
     {
         parent::__construct($request);
-        $this->userInfoRepository = $userInfoRepository;
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -32,13 +32,11 @@ class UserInfoApiController extends BaseApiController
     public function getInfoAction(): Response
     {
         $userId = $this->request->query->getDigits('id', null);
-        if ($userId) {
-            $data = $this->userInfoRepository->getInfo($userId);
-        } else {
+        $data = $this->userRepository->getUserWithInfo($userId);
+        if (!$data || !$data) {
             $data = ['error' => 'no such user'];
         }
         $this->render($data);
         return $this->response;
     }
-
 }

@@ -40,7 +40,8 @@ class UserInfo implements UserInfoInterface
      * @param string $secondName
      * @param string $workPlace
      */
-    public function __construct(?int $id, int $userId, string $biography, string $firstName, string $secondName, string $workPlace)
+    public function __construct(?int $id, int $userId, string $biography, string $firstName,
+                                string $secondName, string $workPlace)
     {
         $this->id = $id;
         $this->userId = $userId;

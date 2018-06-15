@@ -8,7 +8,7 @@ namespace App\Authentication;
  * Interface UserInterface
  * @package App\Authentication
  */
-interface UserInterface
+interface UserInterface extends \JsonSerializable
 {
 	/**
 	 * Метод возвращает идентификационную информацию пользователя (первичный ключ в БД пользователей приложения)
