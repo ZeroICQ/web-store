@@ -1,11 +1,10 @@
 <phpunit bootstrap="tests/bootstrap.php"
-         colors="always"
+         colors="true"
          convertErrorsToExceptions="true"
          stopOnError="false"
          stopOnFailure="false"
          stopOnIncomplete="false"
          stopOnSkipped="false"
-         syntaxCheck="false"
          verbose="true"
 >
     <testsuites>
@@ -24,7 +23,6 @@
         <log type="coverage-html" target="cov/report" lowUpperBound="35"
              highLowerBound="70"/>
         <log type="coverage-clover" target="cov/coverage.xml"/>
-        <log type="coverage-php" target="cov/coverage.serialized"/>
         <log type="coverage-text" target="php://stdout" showUncoveredFiles="false"/>
         <log type="junit" target="cov/logfile.xml"/>
         <log type="testdox-html" target="cov/testdox.html"/>
