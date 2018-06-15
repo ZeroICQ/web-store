@@ -51,4 +51,17 @@ class AuthenticationServiceTest extends TestCase
         $this->assertNull($userToken->getUser());
     }
 
+    public function testRegisterUser()
+    {
+        $repo = $this->createMock(UserRepository::class);
+
+        $repo->method('save')->willReturn(1);
+        $repo->expects($this->once())
+            ->method('save')->with($this->equalTo(1));
+
+        $auth = new AuthenticationService($repo, 'iopdasojijcoajscx,mzmc,z.xmizqje');
+        $auth->registerUser('username', 'password');
+
+    }
+
 }
