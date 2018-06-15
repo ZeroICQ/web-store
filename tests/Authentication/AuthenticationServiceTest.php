@@ -4,103 +4,51 @@
 namespace AppTest\Authentication;
 
 
+use App\Authentication\Encoder\UserPasswordEncoder;
 use App\Authentication\Repository\UserRepository;
 use App\Authentication\Service\AuthenticationService;
 use App\Authentication\User;
-use App\ORM\EntityManager;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpFoundation\Session\Session;
 
 class AuthenticationServiceTest extends TestCase
 {
-    public function testSuccessfullAuthenticate()
+    public function testSuccessfulAuthenticate()
     {
-
-        $session = $this->createMock(Session::class);
-        $session->method('get')->willReturn('userName');
-        $session->expects($this->once())
-            ->method('get')->with($this->equalTo('login'));
-
+        $cryptedPassword = UserPasswordEncoder::encodePassword('passhash');
 
         $repo = $this->createMock(UserRepository::class);
-        $repo->method('findByLogin')->willReturn(new User(1, 'userName', 'passhash'));
+        $repo->method('findByLogin')->willReturn(
+            new User(1, 'username', $cryptedPassword));
+        $repo->expects($this->exactly(2))
+            ->method('findByLogin')->with($this->equalTo('username'));
 
-        $em = $this->createMock(EntityManager::class);
-        $em->method('getRepository')->willReturn($repo);
+        $auth = new AuthenticationService($repo, 'iopdasojijcoajscx,mzmc,z.xmizqje');
+        $credentials = $auth->generateCredentials('username', 'passhash');
+        $userToken = $auth->authenticate($credentials);
 
-        $auth = new AuthenticationService($em);
-        $userToken = $auth->authenticate($session);
-
+        $this->assertFalse($userToken->isAnonymous());
         $this->assertSame(1, $userToken->getUser()->getId());
         $this->assertSame('username', $userToken->getUser()->getLogin());
-        $this->assertSame('passhash', $userToken->getUser()->getPassword());
-        $this->assertFalse($userToken->isAnonymous());
+        $this->assertSame($cryptedPassword, $userToken->getUser()->getPassword());
 
     }
 
     public function testFailedAuthenticate()
     {
-
-        $session = $this->createMock(Session::class);
-        $session->method('get')->willReturn(null);
-
-        $session->expects($this->once())
-            ->method('get')->with($this->equalTo('login'));
-
+        $cryptedPassword = UserPasswordEncoder::encodePassword('passhash');
 
         $repo = $this->createMock(UserRepository::class);
-        $repo->method('findByLogin')->willReturn(null);
+        $repo->method('findByLogin')->willReturn(
+            new User(1, 'username', $cryptedPassword));
+        $repo->expects($this->exactly(2))
+            ->method('findByLogin')->with($this->equalTo('username'));
 
-        $em = $this->createMock(EntityManager::class);
-        $em->method('getRepository')->willReturn($repo);
+        $auth = new AuthenticationService($repo, 'iopdasojijcoajscx,mzmc,z.xmizqje');
+        $credentials = $auth->generateCredentials('username', 'wrongpassword');
+        $userToken = $auth->authenticate($credentials);
 
-        $auth = new AuthenticationService($em);
-        $userToken = $auth->authenticate($session);
-
-        $this->assertNull($userToken->getUser());
         $this->assertTrue($userToken->isAnonymous());
-
+        $this->assertNull($userToken->getUser());
     }
 
-    public function testGenCredentialsUserNotNull()
-    {
-        $session = $this->createMock(Session::class);
-        $session->method('invalidate');
-        $session->expects($this->once())->method('invalidate');
-        $session->method('set');
-        $session->expects($this->once())->method('set')->with('login', 'username');
-
-        $user = $this->createMock(User::class);
-        $user->method('getLogin')->willReturn('username');
-        $user->expects($this->once())->method('getLogin');
-
-        $repo = $this->createMock(UserRepository::class);
-        $repo->method('findByLogin')->willReturn(null);
-
-        $em = $this->createMock(EntityManager::class);
-        $em->method('getRepository')->willReturn($repo);
-
-        $auth = new AuthenticationService($em);
-        $auth->generateCredentials($user, $session);
-    }
-
-    public function testGenCredentialsUserNull()
-    {
-        $session = $this->createMock(Session::class);
-        $session->method('invalidate');
-        $session->expects($this->once())->method('invalidate');
-        $session->method('set');
-        $session->expects($this->exactly(0))->method('set');
-
-        $user = null;
-
-        $repo = $this->createMock(UserRepository::class);
-        $repo->method('findByLogin')->willReturn(null);
-
-        $em = $this->createMock(EntityManager::class);
-        $em->method('getRepository')->willReturn($repo);
-
-        $auth = new AuthenticationService($em);
-        $auth->generateCredentials($user, $session);
-    }
 }
