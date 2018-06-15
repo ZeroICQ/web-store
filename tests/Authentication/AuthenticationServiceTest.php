@@ -33,6 +33,16 @@ class AuthenticationServiceTest extends TestCase
 
     }
 
+    public function testAuthenticateMalformedCredentials()
+    {
+        $repo = $this->createMock(UserRepository::class);
+
+        $auth = new AuthenticationService($repo, 'iopdasojijcoajscx,mzmc,z.xmizqje');
+        $credentials = 'some random malformed credentials';
+        $userToken = $auth->authenticate($credentials);
+        $this->assertTrue($userToken->isAnonymous());
+    }
+
     public function testFailedAuthenticate()
     {
         $cryptedPassword = UserPasswordEncoder::encodePassword('passhash');
@@ -66,7 +76,6 @@ class AuthenticationServiceTest extends TestCase
 
         $this->assertFalse($userToken->isAnonymous());
         $this->assertSame('username', $userToken->getUser()->getLogin());
-
     }
 
     public function testRegisterUserFail()
