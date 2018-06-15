@@ -9,6 +9,7 @@ use App\Authentication\Service\AuthenticationService;
 use App\Authentication\Service\AuthenticationServiceInterface;
 use App\Authentication\User;
 use App\Authentication\UserInfoInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Twig_Environment;
@@ -76,13 +77,15 @@ class ProfileController extends BaseController
             $workPlace  = $this->request->request->filter('workPlace');
             $biography  = $this->request->request->filter('biography');
 
-            $this->userInfoRepository->updateInfo(
-                $userToken->getUser()->getId(),
-                $firstName,
-                $secondName,
-                $workPlace,
-                $biography
-            );
+            $updateResult = $this->userInfoRepository->updateInfo(
+                            $userToken->getUser()->getId(),
+                            $firstName,
+                            $secondName,
+                            $workPlace,
+                            $biography);
+            if ($updateResult) {
+                $this->response = new RedirectResponse('/profile?id='.$userToken->getUser()->getId());
+            }
         }
 
         $data['userInfo'] = $this->userInfoRepository->getInfo($userToken->getUser()->getId());
