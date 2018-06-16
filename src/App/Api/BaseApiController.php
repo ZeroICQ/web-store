@@ -39,5 +39,4 @@ class BaseApiController
         $this->response->setContent($content);
         return true;
     }
-
 }

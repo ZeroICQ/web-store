@@ -35,6 +35,7 @@ class UserInfoApiController extends BaseApiController
         $data = $this->userRepository->getUserWithInfo($userId);
         if (!$data || !$data) {
             $data = ['error' => 'no such user'];
+            $this->response->setStatusCode(404);
         }
         $this->render($data);
         return $this->response;

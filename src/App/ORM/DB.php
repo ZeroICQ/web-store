@@ -95,7 +95,6 @@ class DB
     {
         $selectFields = implode(', ', array_map(function ($val) use ($table) {return $table.".".$val; }, $fields));
         $selectJoinFields = implode(', ', array_map(function ($val) use ($joinTable) {return $joinTable.".".$val; }, $joinFields));
-//        $selectJoinFields = implode($table.', ', $joinFields);
         $query = "SELECT  {$selectFields}, {$selectJoinFields} "
                   ."FROM {$table} "
                   ."LEFT JOIN {$joinTable} ON {$table}.{$joinCond[0]} = {$joinTable}.{$joinCond[1]} "
