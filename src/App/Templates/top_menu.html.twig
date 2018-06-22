@@ -9,6 +9,12 @@
                 Register
             </a>
 
+            {% if userToken and not userToken.isAnonymous()%}
+                <a class="item" href="/profile?id={{ userToken.getUser().getId() }}">
+                    Profile
+                </a>
+            {% endif %}
+
             {% if userToken and not userToken.isAnonymous() %}
                 <div class="right menu">
                     <div class="ui simple dropdown item">
