@@ -6,28 +6,28 @@
 
 {% block content %}
     {% if userInfo %}
-        <form class="ui form" method="post">
+        <form id="save-profile-form" class="ui form" method="post">
             <div class="field">
                 <label>Login</label>
-                <input type="text" name="login" value="{{ user.getLogin() }}">
+                <input type="text" name="login" id="login-input" value="{{ user.getLogin() }}">
             </div>
             <div class="field">
                 <label>First name</label>
-                <input type="text" name="firstName" placeholder="first name" value="{{ userInfo.getFirstName() }}">
+                <input type="text" name="firstName" id="firstname-input" placeholder="first name" value="{{ userInfo.getFirstName() }}">
             </div>
             <div class="field">
                 <label>Second name</label>
-                <input type="text" name="secondName" placeholder="second name" value="{{ userInfo.getSecondName() }}">
+                <input type="text" name="secondName" id="secondname-input" placeholder="second name" value="{{ userInfo.getSecondName() }}">
             </div>
             <div class="field">
                 <label>Working place</label>
-                <input type="text" name="workPlace" placeholder="Google" value="{{ userInfo.getWorkPlace() }}">
+                <input type="text" name="workPlace" id="workplace-input" placeholder="Google" value="{{ userInfo.getWorkPlace() }}">
             </div>
             <div class="field">
                 <label>Biography</label>
-                <textarea name="biography" rows="4" placeholder="Born to die">{{ userInfo.getBiography() }}</textarea>
+                <textarea name="biography" rows="4" id="bio-input" placeholder="Born to die">{{ userInfo.getBiography() }}</textarea>
             </div>
-            <button class="ui button" type="submit">Save</button>
+            <button class="ui button" id='save-profile-btn' type="submit">Save</button>
         </form>
 
         </div>
@@ -38,5 +38,5 @@
 
 {% block scripts %}
     {{ parent() }}
-    {#<script src="{{ static_path('profile.js') }}"></script>#}
+    <script src="{{ static_path('profile.js') }}"></script>
 {% endblock %}
