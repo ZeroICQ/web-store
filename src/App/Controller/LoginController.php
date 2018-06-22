@@ -83,8 +83,8 @@ class LoginController extends BaseController
             return $this->response;
         }
 
-        $login = $this->request->request->getAlnum('login');
-        $rawPassword = $this->request->request->getAlnum('password');
+        $login = $this->request->request->filter('login');
+        $rawPassword = $this->request->request->filter('password');
 
         $userToken = $this->authenticationService->registerUser($login, $rawPassword);
         $authCookieValue = $this->authenticationService->generateCredentials($login, $rawPassword);

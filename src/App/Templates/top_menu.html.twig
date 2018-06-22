@@ -5,9 +5,11 @@
             <a class="item {% if activePage == 'home' %} active {% endif %}" href="/">
                 Sign In
             </a>
-            <a class="item {% if activePage == 'register' %} active {% endif %}" href="/register">
-                Register
-            </a>
+            {% if not userToken or userToken.isAnonymous()%}
+                <a class="item {% if activePage == 'register' %} active {% endif %}" href="/register">
+                    Register
+                </a>
+            {% endif %}
 
             {% if userToken and not userToken.isAnonymous()%}
                 <a class="item" href="/profile?id={{ userToken.getUser().getId() }}">
