@@ -30,7 +30,7 @@ class BaseApiController
     }
 
     /**
-     * @param array|UserInfoInterface $data
+     * @param array $data
      * @return bool
      */
     protected function render($data): bool

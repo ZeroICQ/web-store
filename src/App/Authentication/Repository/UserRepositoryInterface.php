@@ -35,12 +35,4 @@ interface UserRepositoryInterface
      * @param UserInterface $user
      */
 	public function save(UserInterface $user);
-
-    /**
-     * Метод возвращает пользователя вместе с информацией если он существует, иначе null.
-     *
-     * @param int $id
-     * @return UserInterface|null
-     */
-	public function getUserWithInfo(int $id) : ?UserInterface;
 }

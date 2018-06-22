@@ -4,7 +4,7 @@
 namespace App\Authentication;
 
 
-interface UserInfoInterface extends \JsonSerializable
+interface UserInfoInterface
 {
     /**
      * @return int?
@@ -35,5 +35,10 @@ interface UserInfoInterface extends \JsonSerializable
      * @return string
      */
     public function getWorkPlace(): string;
+
+    /**
+     * @return array
+     */
+    public function toArray(): array;
 
 }

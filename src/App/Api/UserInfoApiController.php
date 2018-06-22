@@ -32,10 +32,12 @@ class UserInfoApiController extends BaseApiController
     public function getInfoAction(): Response
     {
         $userId = $this->request->query->getDigits('id', null);
-        $data = $this->userRepository->getUserWithInfo($userId);
-        if (!$data || !$data) {
+        $user = $this->userRepository->findById($userId);
+        if (!$user) {
             $data = ['error' => 'no such user'];
             $this->response->setStatusCode(404);
+        } else {
+            $data = $user->toArray();
         }
         $this->render($data);
         return $this->response;

@@ -8,7 +8,7 @@ namespace App\Authentication;
  * Interface UserInterface
  * @package App\Authentication
  */
-interface UserInterface extends \JsonSerializable
+interface UserInterface
 {
 	/**
 	 * Метод возвращает идентификационную информацию пользователя (первичный ключ в БД пользователей приложения)
@@ -30,4 +30,14 @@ interface UserInterface extends \JsonSerializable
 	 * @return string|null
 	 */
 	public function getPassword(): ?string;
+
+    /**
+     * @return array
+     */
+    public function toArray(): array;
+
+    /**
+     * @return UserInfoInterface|null
+     */
+    public function getUserInfo(): ?UserInfoInterface;
 }

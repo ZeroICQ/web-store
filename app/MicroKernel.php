@@ -73,7 +73,11 @@ class MicroKernel
 
         //auth service
         $this->container->register(AuthenticationService::class, AuthenticationService::class)
-            ->setArguments([new Reference(UserRepository::class), $this->getKey()]);
+            ->setArguments([
+                new Reference(UserRepository::class),
+                new Reference(UserInfoRepository::class),
+                $this->getKey()
+            ]);
 
 
         //LoginController

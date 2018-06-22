@@ -90,25 +90,25 @@ class DB
      * @param array $joinFields
      * @return array
      */
-    public function selectFirstWithSimpleJoin(string $table, array $fields, string $searchField, $val, string $valType,
-                                              string $joinTable, array $joinCond, array $joinFields)
-    {
-        $selectFields = implode(', ', array_map(function ($val) use ($table) {return $table.".".$val; }, $fields));
-        $selectJoinFields = implode(', ', array_map(function ($val) use ($joinTable) {return $joinTable.".".$val; }, $joinFields));
-        $query = "SELECT  {$selectFields}, {$selectJoinFields} "
-                  ."FROM {$table} "
-                  ."LEFT JOIN {$joinTable} ON {$table}.{$joinCond[0]} = {$joinTable}.{$joinCond[1]} "
-                  ."WHERE ${table}.{$searchField} = ?";
-
-        $stmt = $this->connection->prepare($query);
-        $stmt->bind_param($valType, $val);
-        $stmt->execute();
-
-        $result = $stmt->get_result()->fetch_assoc();
-        $stmt->close();
-
-        return $result;
-    }
+//    public function selectFirstWithSimpleJoin(string $table, array $fields, string $searchField, $val, string $valType,
+//                                              string $joinTable, array $joinCond, array $joinFields)
+//    {
+//        $selectFields = implode(', ', array_map(function ($val) use ($table) {return $table.".".$val; }, $fields));
+//        $selectJoinFields = implode(', ', array_map(function ($val) use ($joinTable) {return $joinTable.".".$val; }, $joinFields));
+//        $query = "SELECT  {$selectFields}, {$selectJoinFields} "
+//                  ."FROM {$table} "
+//                  ."LEFT JOIN {$joinTable} ON {$table}.{$joinCond[0]} = {$joinTable}.{$joinCond[1]} "
+//                  ."WHERE ${table}.{$searchField} = ?";
+//
+//        $stmt = $this->connection->prepare($query);
+//        $stmt->bind_param($valType, $val);
+//        $stmt->execute();
+//
+//        $result = $stmt->get_result()->fetch_assoc();
+//        $stmt->close();
+//
+//        return $result;
+//    }
 
     /**
      * @param string $table

@@ -5,6 +5,7 @@ namespace App\Authentication\Service;
 
 
 use App\Authentication\Encoder\UserPasswordEncoder;
+use App\Authentication\Repository\UserInfoRepository;
 use App\Authentication\Repository\UserRepositoryInterface;
 use App\Authentication\User;
 use App\Authentication\UserToken;
@@ -20,16 +21,23 @@ class AuthenticationService implements AuthenticationServiceInterface
      * @var string
      */
     private $key;
+    /**
+     * @var UserInfoRepository
+     */
+    private $userInfoRepository;
 
     /**
      * AuthenticationService constructor.
      * @param UserRepositoryInterface $userRepository
+     * @param UserInfoRepository $userInfoRepository
      * @param string $key
      */
-    public function __construct(UserRepositoryInterface $userRepository, string $key)
+    public function __construct(UserRepositoryInterface $userRepository,
+                                UserInfoRepository $userInfoRepository, string $key)
     {
         $this->userRepository = $userRepository;
         $this->key = $key;
+        $this->userInfoRepository = $userInfoRepository;
     }
 
     /**
@@ -108,12 +116,12 @@ class AuthenticationService implements AuthenticationServiceInterface
     public function registerUser(string $login, string $rawPassword) : UserToken
     {
         $cryptedPassword = UserPasswordEncoder::encodePassword($rawPassword);
-        $user = new User(null, $login, $cryptedPassword);
+        $user = new User(null, $login, $cryptedPassword, $this->userInfoRepository);
 
         $userId = $this->userRepository->save($user);
 
         if ($userId) {
-            return new UserToken(new User($userId, $login, $cryptedPassword));
+            return new UserToken(new User($userId, $login, $cryptedPassword, $this->userInfoRepository));
         }
 
         return new UserToken(null);

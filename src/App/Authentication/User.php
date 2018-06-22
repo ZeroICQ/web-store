@@ -4,20 +4,19 @@
 namespace App\Authentication;
 
 
+use App\Authentication\Repository\UserInfoRepositoryInterface;
+
 class User implements UserInterface
 {
     public const authCookieName = 'auth_cookie';
-
     /**
      * @var int|null
      */
     private $id;
-
     /**
      * @var string|null
      */
     private $login;
-
     /**
      * @var string|null
      */
@@ -26,6 +25,10 @@ class User implements UserInterface
      * @var UserInfoInterface|null
      */
     private $userInfo;
+    /**
+     * @var UserInfoRepositoryInterface
+     */
+    private $userInfoRepository;
 
     /**
      * User constructor.
@@ -34,14 +37,13 @@ class User implements UserInterface
      * @param string $password
      * @param UserInfoInterface|null $userInfo
      */
-    public function __construct(?int $id, string $login, string $password, UserInfoInterface $userInfo = null)
+    public function __construct(?int $id, string $login, string $password, UserInfoRepositoryInterface $userInfoRepository)
     {
         $this->id = $id;
         $this->login = strlen($login) > 0 ? strtolower($login) : null;
         $this->password = strlen($password) > 0 ? $password : null;
-        $this->userInfo = $userInfo;
+        $this->userInfoRepository = $userInfoRepository;
     }
-
 
     /**
      * Метод возвращает идентификационную информацию пользователя (первичный ключ в БД пользователей приложения)
@@ -79,32 +81,36 @@ class User implements UserInterface
      */
     public function getUserInfo(): ?UserInfoInterface
     {
+        if (!$this->userInfo) {
+            $this->userInfo = $this->userInfoRepository->getInfo($this->id);
+        }
         return $this->userInfo;
     }
 
+
     /**
-     * Specify data which should be serialized to JSON
-     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
-     * @return mixed data which can be serialized by <b>json_encode</b>,
-     * which is a value of any type other than a resource.
-     * @since 5.4.0
+     * @return array
      */
-    public function jsonSerialize()
+    public function toArray(): array
     {
-        $json = [
+        $arr = [
             'id'    => $this->id,
-            'login' => $this->login
+            'login' => $this->login,
+            'biography'  => $this->getUserInfo()->getBiography(),
+            'firstName'  => $this->getUserInfo()->getFirstName(),
+            'secondName' => $this->getUserInfo()->getSecondName(),
+            'workPlace'  => $this->getUserInfo()->getWorkPlace()
         ];
 
-        if ($this->userInfo) {
-            $json = array_merge($json, [
-                'biography'  => $this->userInfo->getBiography(),
-                'firstName'  => $this->userInfo->getFirstName(),
-                'secondName' => $this->userInfo->getSecondName(),
-                'workPlace'  => $this->userInfo->getWorkPlace()
-            ]);
-        }
-        return $json;
+//        if ($this->userInfo) {
+//            $arr = array_merge($arr, [
+//                'biography'  => $this->getUserInfo()->getBiography(),
+//                'firstName'  => $this->getUserInfo()->getFirstName(),
+//                'secondName' => $this->getUserInfo()->getSecondName(),
+//                'workPlace'  => $this->getUserInfo()->getWorkPlace()
+//            ]);
+//        }
+        return $arr;
     }
 
 }

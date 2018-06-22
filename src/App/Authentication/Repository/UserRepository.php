@@ -27,7 +27,6 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         $this->infoRepository = $infoRepository;
     }
 
-
     /**
      * Метод ищет пользователя по индентификатору, возвращает UserInterface если пользователь существует, иначе null
      *
@@ -40,7 +39,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
 
         $user = null;
         if ($result) {
-            $user = new User($id, $result['login'], $result['password']);
+            $user = new User($id, $result['login'], $result['password'], $this->infoRepository);
         }
 
         return $user;
@@ -60,7 +59,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
 
         $user = null;
         if ($result) {
-            $user = new User($result['id'], $login, $result['password']);
+            $user = new User($result['id'], $login, $result['password'], $this->infoRepository);
         }
 
         return $user;
@@ -90,34 +89,5 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
 
         $this->db->commit();
         return $user_insert_id;
-    }
-
-    /**
-     * Метод возвращает пользователя вместе с информацией если он существует, иначе null.
-     *
-     * @param int $id
-     * @return UserInterface|null
-     */
-    public function getUserWithInfo(int $id): ?UserInterface
-    {
-
-        $result = $this->db->selectFirstWithSimpleJoin('users', ['id', 'login'], 'id', $id, 'i',
-            'user_info', ['id', 'user_id'], ['biography', 'first_name', 'second_name', 'work_place']);
-
-        $user = null;
-        if ($result) {
-            $userInfo = new UserInfo(
-                null,
-                $id,
-                $result['biography'],
-                $result['first_name'],
-                $result['second_name'],
-                $result['work_place']
-            );
-
-            $user = new User($result['id'], $result['login'], "", $userInfo);
-        }
-
-        return $user;
     }
 }

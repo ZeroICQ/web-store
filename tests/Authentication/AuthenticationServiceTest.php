@@ -5,6 +5,7 @@ namespace AppTest\Authentication;
 
 
 use App\Authentication\Encoder\UserPasswordEncoder;
+use App\Authentication\Repository\UserInfoRepository;
 use App\Authentication\Repository\UserRepository;
 use App\Authentication\Service\AuthenticationService;
 use App\Authentication\User;
@@ -17,12 +18,14 @@ class AuthenticationServiceTest extends TestCase
         $cryptedPassword = UserPasswordEncoder::encodePassword('passhash');
 
         $repo = $this->createMock(UserRepository::class);
+        $infoRepo = $this->createMock(UserInfoRepository::class);
+
         $repo->method('findByLogin')->willReturn(
-            new User(1, 'username', $cryptedPassword));
+            new User(1, 'username', $cryptedPassword, $infoRepo));
         $repo->expects($this->exactly(2))
             ->method('findByLogin')->with($this->equalTo('username'));
 
-        $auth = new AuthenticationService($repo, 'iopdasojijcoajscx,mzmc,z.xmizqje');
+        $auth = new AuthenticationService($repo, $infoRepo, 'iopdasojijcoajscx,mzmc,z.xmizqje');
         $credentials = $auth->generateCredentials('username', 'passhash');
         $userToken = $auth->authenticate($credentials);
 
@@ -36,8 +39,9 @@ class AuthenticationServiceTest extends TestCase
     public function testAuthenticateMalformedCredentials()
     {
         $repo = $this->createMock(UserRepository::class);
+        $infoRepo = $this->createMock(UserInfoRepository::class);
 
-        $auth = new AuthenticationService($repo, 'iopdasojijcoajscx,mzmc,z.xmizqje');
+        $auth = new AuthenticationService($repo, $infoRepo, 'iopdasojijcoajscx,mzmc,z.xmizqje');
         $credentials = 'some random malformed credentials';
         $userToken = $auth->authenticate($credentials);
         $this->assertTrue($userToken->isAnonymous());
@@ -46,15 +50,16 @@ class AuthenticationServiceTest extends TestCase
     public function testFailedAuthenticate()
     {
         $cryptedPassword = UserPasswordEncoder::encodePassword('passhash');
+        $infoRepo = $this->createMock(UserInfoRepository::class);
 
         $repo = $this->createMock(UserRepository::class);
         $repo->method('findByLogin')->willReturn(
-            new User(1, 'username', $cryptedPassword));
+            new User(1, 'username', $cryptedPassword, $infoRepo));
 
         $repo->expects($this->once())
             ->method('findByLogin')->with($this->equalTo('username'));
 
-        $auth = new AuthenticationService($repo, 'iopdasojijcoajscx,mzmc,z.xmizqje');
+        $auth = new AuthenticationService($repo, $infoRepo, 'iopdasojijcoajscx,mzmc,z.xmizqje');
 
         $credentials = $auth->generateCredentials('username', 'wrongpassword');
         $userToken = $auth->authenticate($credentials);
@@ -66,12 +71,13 @@ class AuthenticationServiceTest extends TestCase
     public function testRegisterUserSuccess()
     {
         $repo = $this->createMock(UserRepository::class);
+        $infoRepo = $this->createMock(UserInfoRepository::class);
 
         $repo->method('save')->willReturn(1);
         $repo->expects($this->once())
             ->method('save');
 
-        $auth = new AuthenticationService($repo, 'iopdasojijcoajscx,mzmc,z.xmizqje');
+        $auth = new AuthenticationService($repo, $infoRepo, 'iopdasojijcoajscx,mzmc,z.xmizqje');
         $userToken = $auth->registerUser('username', 'password');
 
         $this->assertFalse($userToken->isAnonymous());
@@ -81,12 +87,13 @@ class AuthenticationServiceTest extends TestCase
     public function testRegisterUserFail()
     {
         $repo = $this->createMock(UserRepository::class);
+        $infoRepo = $this->createMock(UserInfoRepository::class);
 
         $repo->method('save')->willReturn(0);
         $repo->expects($this->once())
             ->method('save');
 
-        $auth = new AuthenticationService($repo, 'iopdasojijcoajscx,mzmc,z.xmizqje');
+        $auth = new AuthenticationService($repo, $infoRepo,'iopdasojijcoajscx,mzmc,z.xmizqje');
         $userToken = $auth->registerUser('username', 'password');
 
         $this->assertTrue($userToken->isAnonymous());
