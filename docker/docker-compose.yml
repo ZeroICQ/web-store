@@ -23,7 +23,7 @@ services:
         image: composer:1.6.3
         volumes:
             - ..:/app
-        command: update
+        command: install
         depends_on:
           - php
 
