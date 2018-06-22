@@ -4,7 +4,6 @@
 namespace App\Api;
 
 
-use App\Authentication\UserInfoInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
