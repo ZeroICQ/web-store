@@ -49,7 +49,7 @@ class UserInfoRepository extends BaseRepository implements UserInfoRepositoryInt
      */
     public function updateInfo(int $userId, string $firstName, string $secondName, string $workPlace, string $biography): bool
     {
-        return $this->db->update('user_info',[
+        return $this->db->update('user_info', [
             'first_name'  => $firstName,
             'second_name' => $secondName,
             'work_place'  => $workPlace,

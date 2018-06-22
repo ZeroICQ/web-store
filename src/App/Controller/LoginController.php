@@ -56,7 +56,7 @@ class LoginController extends BaseController
 
             $authCookieValue = $this->authenticationService->generateCredentials($rawLogin, $rawPassword);
 
-            $authCookie = $this->get30DaysCookie(User::authCookieName, $authCookieValue);
+            $authCookie = $this::get30DaysCookie(User::authCookieName, $authCookieValue);
             $this->response->headers->setCookie($authCookie);
         }
 
@@ -89,7 +89,7 @@ class LoginController extends BaseController
         $userToken = $this->authenticationService->registerUser($login, $rawPassword);
         $authCookieValue = $this->authenticationService->generateCredentials($login, $rawPassword);
 
-        $authCookie = $this->get30DaysCookie(User::authCookieName, $authCookieValue);
+        $authCookie = $this::get30DaysCookie(User::authCookieName, $authCookieValue);
         $this->response->headers->setCookie($authCookie);
 
         if (!$userToken->isAnonymous()) {
@@ -118,7 +118,7 @@ class LoginController extends BaseController
      * @param string $value
      * @return Cookie
      */
-    private function get30DaysCookie(string $name, string $value) : Cookie
+    public static function get30DaysCookie(string $name, string $value) : Cookie
     {
         $now = new DateTime();
 

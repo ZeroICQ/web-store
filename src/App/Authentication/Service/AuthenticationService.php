@@ -109,6 +109,31 @@ class AuthenticationService implements AuthenticationServiceInterface
     }
 
     /**
+     * Метод генерирует authentication credentials без проверки пароля
+     * @param string $login
+     * @return mixed
+     */
+    public function regenerateCredentials(string $login)
+    {
+        //TODO: remove copypaste
+        $user = $this->userRepository->findByLogin($login);
+
+        if ($user) {
+            $cookieStructure = [
+                'login'        => $user->getLogin(),
+                'passwordHash' => $user->getPassword()
+            ];
+
+            // Using your key to encrypt information
+            $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+            $ciphertext = sodium_crypto_secretbox(json_encode($cookieStructure), $nonce, $this->key);
+            return base64_encode($nonce.$ciphertext);
+        }
+        //no such user or password mismatch
+        return '';
+    }
+
+    /**
      * @param string $login
      * @param string $rawPassword
      * @return UserToken

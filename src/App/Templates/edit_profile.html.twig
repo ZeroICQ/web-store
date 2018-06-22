@@ -8,6 +8,10 @@
     {% if userInfo %}
         <form class="ui form" method="post">
             <div class="field">
+                <label>Login</label>
+                <input type="text" name="login" value="{{ user.getLogin() }}">
+            </div>
+            <div class="field">
                 <label>First name</label>
                 <input type="text" name="firstName" placeholder="first name" value="{{ userInfo.getFirstName() }}">
             </div>
@@ -30,4 +34,9 @@
     {% else %}
         Please log in.
     {% endif %}
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    {#<script src="{{ static_path('profile.js') }}"></script>#}
 {% endblock %}

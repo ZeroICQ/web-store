@@ -44,4 +44,11 @@ interface AuthenticationServiceInterface
      * @return mixed
      */
     public function generateCredentials(string $login, string $password);
+
+    /**
+     * Метод генерирует authentication credentials без проверки пароля
+     * @param string $login
+     * @return mixed
+     */
+    public function regenerateCredentials(string $login);
 }

@@ -94,6 +94,7 @@ class MicroKernel
                 $request,
                 new Reference(Twig_Environment::class),
                 new Reference(AuthenticationService::class),
+                new Reference(UserRepository::class),
                 new Reference(UserInfoRepository::class)
             ]);
 

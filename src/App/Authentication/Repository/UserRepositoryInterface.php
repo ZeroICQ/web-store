@@ -35,4 +35,16 @@ interface UserRepositoryInterface
      * @param UserInterface $user
      */
 	public function save(UserInterface $user);
+
+    /**
+     * @param int $userId
+     * @param string $login
+     * @param string $firstName
+     * @param string $secondName
+     * @param string $workPlace
+     * @param string $biography
+     * @return bool
+     */
+    public function update(int $userId, string $login, string $firstName, string $secondName, string $workPlace, string $biography): bool;
 }
+
