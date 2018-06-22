@@ -35,7 +35,7 @@ class User implements UserInterface
      * @param int|null $id
      * @param string $login
      * @param string $password
-     * @param UserInfoInterface|null $userInfo
+     * @param UserInfoRepositoryInterface $userInfoRepository
      */
     public function __construct(?int $id, string $login, string $password, UserInfoRepositoryInterface $userInfoRepository)
     {
@@ -87,7 +87,6 @@ class User implements UserInterface
         return $this->userInfo;
     }
 
-
     /**
      * @return array
      */
@@ -102,14 +101,6 @@ class User implements UserInterface
             'workPlace'  => $this->getUserInfo()->getWorkPlace()
         ];
 
-//        if ($this->userInfo) {
-//            $arr = array_merge($arr, [
-//                'biography'  => $this->getUserInfo()->getBiography(),
-//                'firstName'  => $this->getUserInfo()->getFirstName(),
-//                'secondName' => $this->getUserInfo()->getSecondName(),
-//                'workPlace'  => $this->getUserInfo()->getWorkPlace()
-//            ]);
-//        }
         return $arr;
     }
 
