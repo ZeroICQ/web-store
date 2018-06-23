@@ -106,7 +106,7 @@ class ProfileController extends BaseController
         }
 
         $data['userInfo'] = $this->userInfoRepository->getInfo($userToken->getUser()->getId());
-        $data['user'] = $userToken->getUser();
+        $data['user']     = $this->userRepository->findById($userToken->getUser()->getId());
 
         $this->render('edit_profile.html.twig', $data);
         return $this->response;

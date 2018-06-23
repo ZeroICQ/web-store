@@ -102,7 +102,8 @@ class MicroKernel
         $this->container->register(UserInfoApiController::class, UserInfoApiController::class)
             ->setArguments([
                 $request,
-                new Reference(UserRepository::class)
+                new Reference(UserRepository::class),
+                new Reference(AuthenticationService::class)
             ]);
 
         //router

@@ -47,6 +47,8 @@ class Router
                 return $this->container->get(ProfileController::class)->editProfileAction();
             case '/api/userinfo.json':
                 return $this->container->get(UserInfoApiController::class)->getInfoAction();
+            case '/api/updateUser':
+                return $this->container->get(UserInfoApiController::class)->updateUser();
             default:
                 return new Response("404", 404);
         }
